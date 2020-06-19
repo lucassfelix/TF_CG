@@ -60,6 +60,7 @@
 			<Add option="-Wno-narrowing" />
 			<Add option="-Wno-deprecated-declarations" />
 		</Compiler>
+		<Unit filename="Basico3D.cpp" />
 		<Unit filename="SOIL/SOIL.cpp" />
 		<Unit filename="SOIL/image_DXT.cpp" />
 		<Unit filename="SOIL/image_helper.cpp" />
