@@ -376,9 +376,10 @@ void DesenhaItem(int item)
             break;
         }
 
-    case 4: //casa
+    case 4: //casa vertical
         {
             glPushMatrix();
+                glRotatef(90,0,1,0);
                 glScalef(1.5,1,1.5); //mudar escala
                 casa.ExibeObjeto();
             glPopMatrix();
@@ -400,11 +401,11 @@ void DesenhaCenario()
         DesenhaPiso();
     glPopMatrix();
 
-    for(int j = 0; j < z; j+=2)
+    for(int j = z; j > 0; j-=2)
     {
         glPushMatrix();
             glTranslatef(0,0,j);
-            for(int i = 0; i < z; i+=2)
+            for(int i = z; i > 0; i-=2)
             {
                 glPushMatrix();
                     glTranslatef(i,0,0);
@@ -428,7 +429,7 @@ void DesenhaCenario()
     {
         glPushMatrix();
             glTranslatef(0,0,j*-1);
-            for(int i = 0; i < z; i+=2)
+            for(int i = z; i > 0; i-=2)
             {
                 glPushMatrix();
                     glTranslatef(i,0,0);
@@ -602,7 +603,7 @@ void keyboard ( unsigned char key, int x, int y )
         break;
 
     case 'f':
-        if(obsY == 18)
+        if(obsY == 40)
         {
             obsX = 0;
             obsY = 1;
@@ -612,7 +613,7 @@ void keyboard ( unsigned char key, int x, int y )
         else
         {
             obsX = 3.2;
-            obsY = 18;
+            obsY = 40;
             obsZ = 2.6;
             angObsX = 180;
             angObsY  = -90;
