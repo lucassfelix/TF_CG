@@ -31,52 +31,7 @@ using namespace std;
 #endif
 
 GLfloat AspectRatio, AngY=0;
-// **********************************************************************
-//  void DesenhaCubo()
-//
-//
-// **********************************************************************
-void DesenhaCubo()
-{
-    glBegin ( GL_QUADS );
-    // Front Face
-    glNormal3f(0,0,1);
-    glVertex3f(-1.0f, -1.0f,  1.0f);
-    glVertex3f( 1.0f, -1.0f,  1.0f);
-    glVertex3f( 1.0f,  1.0f,  1.0f);
-    glVertex3f(-1.0f,  1.0f,  1.0f);
-    // Back Face
-    glNormal3f(0,0,-1);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-    glVertex3f(-1.0f,  1.0f, -1.0f);
-    glVertex3f( 1.0f,  1.0f, -1.0f);
-    glVertex3f( 1.0f, -1.0f, -1.0f);
-    // Top Face
-    glNormal3f(0,1,0);
-    glVertex3f(-1.0f,  1.0f, -1.0f);
-    glVertex3f(-1.0f,  1.0f,  1.0f);
-    glVertex3f( 1.0f,  1.0f,  1.0f);
-    glVertex3f( 1.0f,  1.0f, -1.0f);
-    // Bottom Face
-    glNormal3f(0,-1,0);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-    glVertex3f( 1.0f, -1.0f, -1.0f);
-    glVertex3f( 1.0f, -1.0f,  1.0f);
-    glVertex3f(-1.0f, -1.0f,  1.0f);
-    // Right face
-    glNormal3f(1,0,0);
-    glVertex3f( 1.0f, -1.0f, -1.0f);
-    glVertex3f( 1.0f,  1.0f, -1.0f);
-    glVertex3f( 1.0f,  1.0f,  1.0f);
-    glVertex3f( 1.0f, -1.0f,  1.0f);
-    // Left Face
-    glNormal3f(-1,0,0);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-    glVertex3f(-1.0f, -1.0f,  1.0f);
-    glVertex3f(-1.0f,  1.0f,  1.0f);
-    glVertex3f(-1.0f,  1.0f, -1.0f);
-    glEnd();
-}
+
 // **********************************************************************
 //  void DefineLuz(void)
 //
@@ -143,28 +98,38 @@ void init(void)
 #endif
 
 }
-// **********************************************************************
-//  void PosicUser()
-//
-//
-// **********************************************************************
+
 
 float obsX = 0, obsY = 1, obsZ = 0;
 float alvoX = obsX+1, alvoY = obsY, alvoZ = obsZ+1;
 float angObsX = 0;
 float angObsY = 0;
 
+//Mouse Look AT
+float angleHorizontal = 0.0f;
+float angleVertical = 0.0f;
+
+float mouseX = 0.0f, mouseZ = 5.0f; //PosiÁ„o da c‚mera
+float mouseLookX = 1.0f, mouseLookY = 1.0f, mouseLookZ= -1.0f; //DireaÁ„o da c‚mera
+    //Estados
+float deltaAngleHorizontal =0.0f;
+float deltaAngleVertical = 0.0f;
+float deltaMoveHorizontal = 0.0f;
+float deltaMoveVertical = 0.0f;
+int xOrigin = -1;
+int yOrigin = -1;
+
 void MovimentaObservador(int direcao)
 {
     switch(direcao)
     {
         case 1: //frente
-            glPushMatrix();
+     //       glPushMatrix();
                 obsX = obsX+0.7*((cos((angObsX*3.14)/180) + sin((angObsX*3.14)/180)));
                 obsZ = obsZ+0.7*((-(sin((angObsX*3.14)/180)) + cos((angObsX*3.14)/180)));
                 alvoX = alvoX+0.7*((cos((angObsX*3.14)/180) + sin((angObsX*3.14)/180)));
                 alvoZ = alvoZ+0.7*((-(sin((angObsX*3.14)/180)) + cos((angObsX*3.14)/180)));
-            glPopMatrix();
+    //glPopMatrix();
             break;
 
         case 2: //tr·s
@@ -204,6 +169,28 @@ void MovimentaObservador(int direcao)
     }
 }
 
+void PosicUser()
+{
+	// Define os parâmetros da projeção Perspectiva
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(90,AspectRatio,0.01,200);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(mouseX, 1.0f, mouseZ,   // Posição do Observador
+              mouseX+mouseLookX, mouseLookY , mouseZ + mouseLookZ,     // Posição do Alvo
+			  0.0f,1.0f,0.0f);
+
+}
+
+void computePos(float deltaMoveHorizontal)
+{
+    mouseX += deltaMoveHorizontal * mouseLookX * 0.1f;
+	mouseZ += deltaMoveHorizontal * mouseLookZ * 0.1f;
+}
+
+//FunÁ„o que transforma cÛdigo hexadecimal em uma cor de openGL
 vector<int> hexToColor(string Entrada)
 {
     string aux;
@@ -225,7 +212,8 @@ vector<int> hexToColor(string Entrada)
     return resp;
 }
 
-typedef struct  // Struct para armazenar um ponto
+// Struct para armazenar um ponto X,Y,Z
+typedef struct
 {
     float X,Y,Z;
     void Set(float x, float y, float z)
@@ -240,8 +228,8 @@ typedef struct  // Struct para armazenar um ponto
     }
 } TPoint;
 
-
-typedef struct // Struct para armazenar um tri‚ngulo
+// Struct para armazenar um tri‚ngulo
+typedef struct
 {
     TPoint P1, P2, P3;
     vector<int> cor;
@@ -291,6 +279,7 @@ public:
             fig.P3 = aa[2];
             fig.cor = hexToColor(color);
             faces.push_back(fig);
+
             //cout << "oi" << endl;
         }
         inFile.close();
@@ -318,6 +307,66 @@ public:
     }
 };
 
+//DeclaraÁ„o de Objetos3D
+Objeto3D arvore("treeNOVO");
+Objeto3D casa("casaNOVO");
+Objeto3D testezera("house");
+Objeto3D testezera2("ferrariNOVO");
+
+
+
+
+
+
+// **********************************************************************
+//  FunÁıes de Desenho
+//
+// **********************************************************************
+
+void DesenhaCubo()
+{
+    glBegin ( GL_QUADS );
+    // Front Face
+    glNormal3f(0,0,1);
+    glVertex3f(-1.0f, -1.0f,  1.0f);
+    glVertex3f( 1.0f, -1.0f,  1.0f);
+    glVertex3f( 1.0f,  1.0f,  1.0f);
+    glVertex3f(-1.0f,  1.0f,  1.0f);
+    // Back Face
+    glNormal3f(0,0,-1);
+    glVertex3f(-1.0f, -1.0f, -1.0f);
+    glVertex3f(-1.0f,  1.0f, -1.0f);
+    glVertex3f( 1.0f,  1.0f, -1.0f);
+    glVertex3f( 1.0f, -1.0f, -1.0f);
+    // Top Face
+    glNormal3f(0,1,0);
+    glVertex3f(-1.0f,  1.0f, -1.0f);
+    glVertex3f(-1.0f,  1.0f,  1.0f);
+    glVertex3f( 1.0f,  1.0f,  1.0f);
+    glVertex3f( 1.0f,  1.0f, -1.0f);
+    // Bottom Face
+    glNormal3f(0,-1,0);
+    glVertex3f(-1.0f, -1.0f, -1.0f);
+    glVertex3f( 1.0f, -1.0f, -1.0f);
+    glVertex3f( 1.0f, -1.0f,  1.0f);
+    glVertex3f(-1.0f, -1.0f,  1.0f);
+    // Right face
+    glNormal3f(1,0,0);
+    glVertex3f( 1.0f, -1.0f, -1.0f);
+    glVertex3f( 1.0f,  1.0f, -1.0f);
+    glVertex3f( 1.0f,  1.0f,  1.0f);
+    glVertex3f( 1.0f, -1.0f,  1.0f);
+    // Left Face
+    glNormal3f(-1,0,0);
+    glVertex3f(-1.0f, -1.0f, -1.0f);
+    glVertex3f(-1.0f, -1.0f,  1.0f);
+    glVertex3f(-1.0f,  1.0f,  1.0f);
+    glVertex3f(-1.0f,  1.0f, -1.0f);
+    glEnd();
+}
+
+
+
 void DesenhaParalelepipedo()
 {
     glPushMatrix();
@@ -339,35 +388,20 @@ void DesenhaPiso()
     glEnd();
 }
 
-void PosicUser()
-{
-	// Define os parâmetros da projeção Perspectiva
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(90,AspectRatio,0.01,200);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(obsX, obsY, obsZ,   // Posição do Observador
-              alvoX,alvoY,alvoZ,     // Posição do Alvo
-			  0.0f,1.0f,0.0f);
 
-}
-
-Objeto3D arvore("treeNOVO");
-Objeto3D casa("casaNOVO");
 
 void DesenhaItem(int item)
 {
     switch(item)
     {
-    case 1: //rua
+    case 1: //Rua
         {
             DesenhaParalelepipedo();
             break;
         }
 
-    case 3: //arvore
+    case 3: //¡rvore
         {
             glPushMatrix();
                 glScalef(0.4,0.4,0.4);
@@ -376,7 +410,7 @@ void DesenhaItem(int item)
             break;
         }
 
-    case 4: //casa vertical
+    case 4: //Casa vertical
         {
             glPushMatrix();
                 glRotatef(90,0,1,0);
@@ -385,7 +419,7 @@ void DesenhaItem(int item)
             glPopMatrix();
             break;
         }
-    //case 5: //sentinel tower
+    //case 5: //Sentinel tower
     }
 }
 
@@ -482,9 +516,6 @@ void reshape( int w, int h )
 //
 //
 // **********************************************************************
-Objeto3D testezera("house");
-Objeto3D testezera2("ferrariNOVO");
-
 void display( void )
 {
 
@@ -492,39 +523,18 @@ void display( void )
 
 	DefineLuz();
 
-	PosicUser();
+
 
 	glMatrixMode(GL_MODELVIEW);
 
-//	glPushMatrix();
-//		glTranslatef ( 2.0f, 0.0f, 1.0f );
-//        glRotatef(AngY,0,1,0);
-//		glColor3f(0.5f,0.0f,0.0f); // Vermelho
-//		DesenhaCubo();
-//	glPopMatrix();
-//
-//	glPushMatrix();
-//		glTranslatef ( -2.0f, 2.0f, -1.0f );
-//		glRotatef(AngY,0,1,0);
-//		glColor3f(0.0f,0.6f,0.0f); // Verde
-//		DesenhaCubo();
-//	glPopMatrix();
-
+	/*
 	glPushMatrix();
         glScalef(0.4,0.4,0.4);
         testezera2.ExibeObjeto();
 	glPopMatrix();
-
+*/
     DesenhaCenario();
 
-//    glPushMatrix();
-//        glScalef(0.4,0.4,0.4);
-//        glTranslatef(10,0,10);
-//        arvore.ExibeObjeto();
-//	glPopMatrix();
-
-    cout << "x: " << obsX << " z: " << obsZ << endl;
-    cout << angObsX << " | " << angObsY << endl;
 
 	glutSwapBuffers();
 }
@@ -550,20 +560,30 @@ void animate()
     dt = (float)(time_now.tv_sec  - last_idle_time.tv_sec) +
     1.0e-6*(time_now.tv_usec - last_idle_time.tv_usec);
 #endif
+
+    if(deltaMoveHorizontal)
+        computePos(deltaMoveHorizontal);
+
+    PosicUser();
+
     AccumTime +=dt;
+
     if (AccumTime >=3) // imprime o FPS a cada 3 segundos
     {
         cout << 1.0/dt << " FPS"<< endl;
         AccumTime = 0;
+
+        cout << "Pos x: " << mouseX << " Pos z: " << mouseZ << endl;
+        cout << "Look x: " << mouseLookX << " Look z: " << mouseLookZ << endl;
+        cout << "Angle: " << angleHorizontal << " DeltaAngle: " << deltaAngleHorizontal << " DeltaMove: " << deltaMoveHorizontal << endl;
+        cout << "OriginX: " << xOrigin << endl;
+        //cout << angObsX << " | " << angObsY << endl;
+
     }
-    //cout << "AccumTime: " << AccumTime << endl;
-    // Anima cubos
-    AngY = AngY + 1;
+
     // Sa;va o tempo para o próximo ciclo de rendering
     last_idle_time = time_now;
 
-        //if  (GetAsyncKeyState(32) & 0x8000) != 0)
-          //  cout << "Espaco Pressionado" << endl;
 
     // Redesenha
     glutPostRedisplay();
@@ -626,6 +646,42 @@ void keyboard ( unsigned char key, int x, int y )
   }
 }
 
+
+void mouseMove(int x, int y) {
+
+         // this will only be true when the left button is down
+         if (xOrigin >= 0) {
+
+            // update deltaAngle
+            deltaAngleHorizontal = (x - xOrigin) * 0.01f;
+            deltaAngleVertical = (y - yOrigin) * 0.01f;
+
+            // update camera's direction
+            mouseLookX = sin(angleHorizontal + deltaAngleHorizontal);
+            mouseLookY = sin(angleVertical + deltaAngleVertical);
+            mouseLookZ = -cos(angleHorizontal + deltaAngleHorizontal);
+	}
+}
+
+void mouseButton(int button, int state, int x, int y) {
+
+	// only start motion if the left button is pressed
+	if (button == GLUT_LEFT_BUTTON) {
+
+		// when the button is released
+		if (state == GLUT_UP) {
+			angleHorizontal += deltaAngleHorizontal;
+			angleVertical += deltaAngleVertical;
+			xOrigin = -1;
+			yOrigin = -1;
+		}
+		else  {// state = GLUT_DOWN
+			xOrigin = x;
+			yOrigin = y;
+		}
+	}
+}
+
 // **********************************************************************
 //  void arrow_keys ( int a_keys, int x, int y )
 //
@@ -635,8 +691,9 @@ void arrow_keys ( int a_keys, int x, int y )
 {
 	switch ( a_keys )
 	{
-		case GLUT_KEY_UP:       // When Up Arrow Is Pressed...
-			glutFullScreen ( ); // Go Into Full Screen Mode
+		case GLUT_KEY_UP:
+		    deltaMoveHorizontal += 0.5f;    // When Up Arrow Is Pressed...
+			//glutFullScreen ( ); // Go Into Full Screen Mode
 			break;
 	    case GLUT_KEY_DOWN:     // When Down Arrow Is Pressed...
 			glutInitWindowSize  ( 700, 500 );
@@ -668,6 +725,11 @@ int main ( int argc, char** argv )
 	glutSpecialFunc ( arrow_keys );
 	glutIdleFunc ( animate );
 
+	// here are the two new functions
+	glutMouseFunc(mouseButton);
+	glutMotionFunc(mouseMove);
+
 	glutMainLoop ( );
 	return 0;
 }
+

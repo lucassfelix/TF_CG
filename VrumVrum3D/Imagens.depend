@@ -1195,3 +1195,29 @@
 	<windows.h>
 	<sys/time.h>
 
+1593301015 source:c:\users\lucas\documents\faculdade\cg\tf_cg\vrumvrum3d\basico3d.cpp
+	<iostream>
+	<cmath>
+	<ctime>
+	<vector>
+	<string>
+	<fstream>
+	<windows.h>
+	"gl\glut.h"
+	<sys/time.h>
+	<GLUT/glut.h>
+
+1298986600 c:\users\lucas\documents\faculdade\cg\tf_cg\vrumvrum3d\gl\glut.h
+	"freeglut.h"
+
+1298986600 c:\users\lucas\documents\faculdade\cg\tf_cg\vrumvrum3d\gl\freeglut.h
+	"freeglut_std.h"
+	"freeglut_ext.h"
+
+1298986600 c:\users\lucas\documents\faculdade\cg\tf_cg\vrumvrum3d\gl\freeglut_std.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
+1298986600 c:\users\lucas\documents\faculdade\cg\tf_cg\vrumvrum3d\gl\freeglut_ext.h
+
