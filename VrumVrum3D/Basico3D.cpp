@@ -106,68 +106,51 @@ float angObsX = 0;
 float angObsY = 0;
 
 //Mouse Look AT
+
+
+
+//Driving Variables
+float steeringSpeed = 0.005;
+float carX = 1.0f, carZ = -1.0f; // DireÁ„o do carro
+float deltaAngleSteeringHorizontal = 0.0f;
+float steeringAngle = 0.0f;
+float deltaMoveHorizontal = 0.0f;
+
+//Camera Variables
 float angleHorizontal = 0.0f;
 float angleVertical = 0.0f;
-
-float mouseX = 0.0f, mouseZ = 5.0f; //PosiÁ„o da c‚mera
-float mouseLookX = 1.0f, mouseLookY = 1.0f, mouseLookZ= -1.0f; //DireaÁ„o da c‚mera
-    //Estados
-float deltaAngleHorizontal =0.0f;
+float cameraVerticalSpeed = 0.005;
+float cameraHorizontalSpeed = 0.005;
+float mouseX = 0.0f, mouseZ = 5.0f; //PosiÁ„o do carro/c‚mera
+float mouseLookX = 0.0f, mouseLookY = 0.5f, mouseLookZ= -1.0f; //DireaÁ„o da c‚mera
+float deltaAngleCameraHorizontal =0.0f;
 float deltaAngleVertical = 0.0f;
-float deltaMoveHorizontal = 0.0f;
-float deltaMoveVertical = 0.0f;
 int xOrigin = -1;
 int yOrigin = -1;
 
-void MovimentaObservador(int direcao)
+void CarController(int action)
 {
-    switch(direcao)
+    switch(action)
     {
-        case 1: //frente
-     //       glPushMatrix();
-                obsX = obsX+0.7*((cos((angObsX*3.14)/180) + sin((angObsX*3.14)/180)));
-                obsZ = obsZ+0.7*((-(sin((angObsX*3.14)/180)) + cos((angObsX*3.14)/180)));
-                alvoX = alvoX+0.7*((cos((angObsX*3.14)/180) + sin((angObsX*3.14)/180)));
-                alvoZ = alvoZ+0.7*((-(sin((angObsX*3.14)/180)) + cos((angObsX*3.14)/180)));
-    //glPopMatrix();
-            break;
+    case 0://ignition
+        deltaMoveHorizontal = 2.0f;
+        break;
+    default:
 
-        case 2: //tr·s
-            glPushMatrix();
-                obsX = obsX-0.7*((cos((angObsX*3.14)/180) + sin((angObsX*3.14)/180)));
-                obsZ = obsZ-0.7*((-(sin((angObsX*3.14)/180)) + cos((angObsX*3.14)/180)));
-                alvoX = alvoX-0.7*((cos((angObsX*3.14)/180) + sin((angObsX*3.14)/180)));
-                alvoZ = alvoZ-0.7*((-(sin((angObsX*3.14)/180)) + cos((angObsX*3.14)/180)));
-            glPopMatrix();
-            break;
-
-        case 4: //esquerda
-            angObsX += 6;
-            alvoX = (cos((angObsX*3.14)/180) + sin((angObsX*3.14)/180)) + obsX;
-            alvoZ = (-(sin((angObsX*3.14)/180)) + cos((angObsX*3.14)/180)) + obsZ;
-            break;
-
-        case 3: //direita
-            angObsX -= 6;
-            alvoX = (cos((angObsX*3.14)/180) + sin((angObsX*3.14)/180)) + obsX;
-            alvoZ = (-(sin((angObsX*3.14)/180)) + cos((angObsX*3.14)/180)) + obsZ;
-//            alvoX = ((alvoX - obsX)*cos((-6*3.14)/180) + (alvoZ - obsZ)*sin((-6*3.14)/180)) + obsX;
-//            alvoZ = (-((alvoX - obsX)*sin((-6*3.14)/180)) + (alvoZ - obsZ)*cos((-6*3.14)/180)) + obsZ;
-            break;
-
-        case 5:
-            angObsY -= 6;
-            alvoY = (cos((angObsY*3.14)/180) + sin((angObsY*3.14)/180)) + obsY;
-            alvoZ = (-(sin((angObsY*3.14)/180)) + cos((angObsY*3.14)/180)) + obsZ;
-            break;
-
-        case 6:
-            angObsY += 6;
-            alvoY = (cos((angObsY*3.14)/180) + sin((angObsY*3.14)/180)) + obsY;
-            alvoZ = (-(sin((angObsY*3.14)/180)) + cos((angObsY*3.14)/180)) + obsZ;
-            break;
+        break;
     }
 }
+
+void carMovement(float deltaMoveHorizontal)
+{
+    steeringAngle += deltaAngleSteeringHorizontal;
+	carX = sin(steeringAngle);
+	carZ = -cos(steeringAngle);
+
+    mouseX += deltaMoveHorizontal * carX * 0.1f;
+	mouseZ += deltaMoveHorizontal * carZ * 0.1f;
+}
+
 
 void PosicUser()
 {
@@ -179,16 +162,11 @@ void PosicUser()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(mouseX, 1.0f, mouseZ,   // Posição do Observador
-              mouseX+mouseLookX, mouseLookY , mouseZ + mouseLookZ,     // Posição do Alvo
+               mouseX + mouseLookX, 1.0f + mouseLookY , mouseZ +mouseLookZ,     // Posição do Alvo
 			  0.0f,1.0f,0.0f);
 
 }
 
-void computePos(float deltaMoveHorizontal)
-{
-    mouseX += deltaMoveHorizontal * mouseLookX * 0.1f;
-	mouseZ += deltaMoveHorizontal * mouseLookZ * 0.1f;
-}
 
 //FunÁ„o que transforma cÛdigo hexadecimal em uma cor de openGL
 vector<int> hexToColor(string Entrada)
@@ -523,8 +501,6 @@ void display( void )
 
 	DefineLuz();
 
-
-
 	glMatrixMode(GL_MODELVIEW);
 
 	/*
@@ -562,7 +538,8 @@ void animate()
 #endif
 
     if(deltaMoveHorizontal)
-        computePos(deltaMoveHorizontal);
+        carMovement(deltaMoveHorizontal);
+
 
     PosicUser();
 
@@ -570,15 +547,8 @@ void animate()
 
     if (AccumTime >=3) // imprime o FPS a cada 3 segundos
     {
-        cout << 1.0/dt << " FPS"<< endl;
+        //cout << 1.0/dt << " FPS"<< endl;
         AccumTime = 0;
-
-        cout << "Pos x: " << mouseX << " Pos z: " << mouseZ << endl;
-        cout << "Look x: " << mouseLookX << " Look z: " << mouseLookZ << endl;
-        cout << "Angle: " << angleHorizontal << " DeltaAngle: " << deltaAngleHorizontal << " DeltaMove: " << deltaMoveHorizontal << endl;
-        cout << "OriginX: " << xOrigin << endl;
-        //cout << angObsX << " | " << angObsY << endl;
-
     }
 
     // Sa;va o tempo para o próximo ciclo de rendering
@@ -587,6 +557,15 @@ void animate()
 
     // Redesenha
     glutPostRedisplay();
+}
+
+void Debug()
+{
+    cout << "Angle Horizontal: " << angleHorizontal << " Angle Vertical: " << angleVertical<< endl;
+    cout << "mouseX: " << mouseX << " mouseZ: " << mouseZ<< endl;
+    cout << "mouseLookX: " << mouseLookX << " mouseLookY: " << mouseLookY<< " mouseLookZ: " << mouseLookZ<< endl;
+    cout << "deltaAngleCameraHorizontal: " << deltaAngleCameraHorizontal << " deltaAngleVertical: " << deltaAngleVertical<< endl;
+    cout << "xOrigin: " << xOrigin << " yOrigin: " << yOrigin<< endl<< endl;
 }
 
 // **********************************************************************
@@ -601,27 +580,12 @@ void keyboard ( unsigned char key, int x, int y )
     case 27:        // Termina o programa qdo
       exit ( 0 );   // a tecla ESC for pressionada
       break;
-    case 'w':
-        MovimentaObservador(1);
+    case 32:
+        CarController(0); //Ignicao
         break;
-    case 'a':
-        MovimentaObservador(4);
+    case 'g':
+        Debug();
         break;
-    case 's':
-        MovimentaObservador(2);
-        break;
-    case 'd':
-        MovimentaObservador(3);
-        break;
-
-    case 'q':
-        MovimentaObservador(5);
-        break;
-
-    case 'e':
-        MovimentaObservador(6);
-        break;
-
     case 'f':
         if(obsY == 40)
         {
@@ -653,13 +617,13 @@ void mouseMove(int x, int y) {
          if (xOrigin >= 0) {
 
             // update deltaAngle
-            deltaAngleHorizontal = (x - xOrigin) * 0.01f;
-            deltaAngleVertical = (y - yOrigin) * 0.01f;
+            deltaAngleCameraHorizontal = (x - xOrigin) * cameraHorizontalSpeed;
+            deltaAngleVertical = (y - yOrigin) * cameraVerticalSpeed;
 
             // update camera's direction
-            mouseLookX = sin(angleHorizontal + deltaAngleHorizontal);
-            mouseLookY = sin(angleVertical + deltaAngleVertical);
-            mouseLookZ = -cos(angleHorizontal + deltaAngleHorizontal);
+            mouseLookX = sin(angleHorizontal + deltaAngleCameraHorizontal);
+            mouseLookY = -cos(angleVertical + deltaAngleVertical);
+            mouseLookZ = -cos(angleHorizontal + deltaAngleCameraHorizontal);
 	}
 }
 
@@ -670,7 +634,8 @@ void mouseButton(int button, int state, int x, int y) {
 
 		// when the button is released
 		if (state == GLUT_UP) {
-			angleHorizontal += deltaAngleHorizontal;
+//  cout << endl << "--DELTA ANGLE AT CHANGE = " << deltaAngleCameraHorizontal << "--" << endl;
+			angleHorizontal += deltaAngleCameraHorizontal;
 			angleVertical += deltaAngleVertical;
 			xOrigin = -1;
 			yOrigin = -1;
@@ -687,19 +652,32 @@ void mouseButton(int button, int state, int x, int y) {
 //
 //
 // **********************************************************************
-void arrow_keys ( int a_keys, int x, int y )
+void pressionaTecla ( int a_keys, int x, int y )
 {
 	switch ( a_keys )
 	{
-		case GLUT_KEY_UP:
-		    deltaMoveHorizontal += 0.5f;    // When Up Arrow Is Pressed...
-			//glutFullScreen ( ); // Go Into Full Screen Mode
+		case GLUT_KEY_F11:
+			glutFullScreen ( ); // Go Into Full Screen Mode
 			break;
+        case GLUT_KEY_LEFT:
+            deltaAngleSteeringHorizontal = -0.1f;
+            break;
+        case GLUT_KEY_RIGHT:
+            deltaAngleSteeringHorizontal = 0.1f;
+            break;
 	    case GLUT_KEY_DOWN:     // When Down Arrow Is Pressed...
 			glutInitWindowSize  ( 700, 500 );
 			break;
 		default:
 			break;
+	}
+}
+
+void soltaTecla(int key, int x, int y) {
+
+	switch (key) {
+		case GLUT_KEY_LEFT : deltaAngleSteeringHorizontal = 0;break;
+		case GLUT_KEY_RIGHT : deltaAngleSteeringHorizontal = 0;break;
 	}
 }
 
@@ -722,7 +700,10 @@ int main ( int argc, char** argv )
 	glutDisplayFunc ( display );
 	glutReshapeFunc ( reshape );
 	glutKeyboardFunc ( keyboard );
-	glutSpecialFunc ( arrow_keys );
+	glutSpecialFunc ( pressionaTecla );
+	glutIgnoreKeyRepeat(1);
+	glutSpecialUpFunc(soltaTecla);
+
 	glutIdleFunc ( animate );
 
 	// here are the two new functions
