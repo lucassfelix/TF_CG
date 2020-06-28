@@ -115,13 +115,14 @@ float carX = 1.0f, carZ = -1.0f; // Direção do carro
 float deltaAngleSteeringHorizontal = 0.0f;
 float steeringAngle = 0.0f;
 float deltaMoveHorizontal = 0.0f;
+bool carroLigado = false;
 
 //Camera Variables
 float angleHorizontal = 0.0f;
 float angleVertical = 0.0f;
 float cameraVerticalSpeed = 0.005;
 float cameraHorizontalSpeed = 0.005;
-float mouseX = 0.0f, mouseZ = 5.0f; //Posição do carro/câmera
+float cameraPositionX = 0.0f, cameraPositionZ = 5.0f; //Posição do carro/câmera
 float mouseLookX = 0.0f, mouseLookY = 0.5f, mouseLookZ= -1.0f; //Direação da câmera
 float deltaAngleCameraHorizontal =0.0f;
 float deltaAngleVertical = 0.0f;
@@ -134,6 +135,7 @@ void CarController(int action)
     {
     case 0://ignition
         deltaMoveHorizontal = 2.0f;
+        carroLigado = true;
         break;
     default:
 
@@ -147,22 +149,21 @@ void carMovement(float deltaMoveHorizontal)
 	carX = sin(steeringAngle);
 	carZ = -cos(steeringAngle);
 
-    mouseX += deltaMoveHorizontal * carX * 0.1f;
-	mouseZ += deltaMoveHorizontal * carZ * 0.1f;
+    cameraPositionX += deltaMoveHorizontal * carX * 0.1f;
+	cameraPositionZ += deltaMoveHorizontal * carZ * 0.1f;
 }
 
 
 void PosicUser()
 {
-	// Define os par‰metros da proje‹o Perspectiva
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(90,AspectRatio,0.01,200);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(mouseX, 1.0f, mouseZ,   // Posi‹o do Observador
-               mouseX + mouseLookX, 1.0f + mouseLookY , mouseZ +mouseLookZ,     // Posi‹o do Alvo
+	gluLookAt(cameraPositionX, 1.0f, cameraPositionZ,   // Posi‹o do Observador
+               cameraPositionX + mouseLookX, 1.0f + mouseLookY , cameraPositionZ +mouseLookZ,     // Posi‹o do Alvo
 			  0.0f,1.0f,0.0f);
 
 }
@@ -236,8 +237,6 @@ public:
         //TODO: fazer com que "X" seja a cor
         while(inFile >> color)
         {
-
-            //passar o "color" em um conversor de hex -> rgb (tem no moodle)
             vector<TPoint> aa;
             for(int i = 0; i < 3; i++)
             {
@@ -246,7 +245,7 @@ public:
                 inFile >> a;
                 inFile >> b;
                 inFile >> c;
-                //cout << a << endl;
+
                 aux.Set(a,b,c);
                 aa.push_back(aux);
             }
@@ -258,7 +257,6 @@ public:
             fig.cor = hexToColor(color);
             faces.push_back(fig);
 
-            //cout << "oi" << endl;
         }
         inFile.close();
         //verificar se os pontos estao corretos quando o arquivo .tri estiver pronto para teste
@@ -273,14 +271,12 @@ public:
     {
         for(int i = 0; i < faces.size(); i++)
         {
-            glPushMatrix();
-            glColor3f(1,0,1); //colocar cor do triangulo
-                glBegin(GL_TRIANGLES);
-                    glVertex3f(faces[i].P1.X,faces[i].P1.Y,faces[i].P1.Z);
-                    glVertex3f(faces[i].P2.X,faces[i].P2.Y,faces[i].P2.Z);
-                    glVertex3f(faces[i].P3.X,faces[i].P3.Y,faces[i].P3.Z);
-                glEnd();
-            glPopMatrix();
+            glColor3f(faces[i].cor[0] ,faces[i].cor[1],faces[i].cor[2]);
+            glBegin(GL_TRIANGLES);
+                glVertex3f(faces[i].P1.X,faces[i].P1.Y,faces[i].P1.Z);
+                glVertex3f(faces[i].P2.X,faces[i].P2.Y,faces[i].P2.Z);
+                glVertex3f(faces[i].P3.X,faces[i].P3.Y,faces[i].P3.Z);
+            glEnd();
         }
     }
 };
@@ -288,18 +284,17 @@ public:
 //Declaração de Objetos3D
 Objeto3D arvore("treeNOVO");
 Objeto3D casa("casaNOVO");
-Objeto3D testezera("house");
-Objeto3D testezera2("ferrariNOVO");
-
-
-
-
-
+Objeto3D modeloCarro("ferrariNOVO");
 
 // **********************************************************************
 //  Funções de Desenho
 //
 // **********************************************************************
+
+void DesenhaQuadrado()
+{
+
+}
 
 void DesenhaCubo()
 {
@@ -373,6 +368,7 @@ void DesenhaItem(int item)
 {
     switch(item)
     {
+
     case 1: //Rua
         {
             DesenhaParalelepipedo();
@@ -488,7 +484,34 @@ void reshape( int w, int h )
 	PosicUser();
 
 }
+float CombusTempo = 100;
 
+void DesenhaCombustivel()
+{
+    int restoCombus = ceil(CombusTempo/10);
+
+    glPushMatrix();
+        glColor3ub(255,0,0);
+
+        glTranslatef(cameraPositionX + mouseLookX,mouseLookY,cameraPositionZ + mouseLookZ);
+        for (int i = 0; i < restoCombus ; i++)
+        {
+
+            glTranslatef(0,1,0);
+            glPushMatrix();
+                glScalef(0.1,0.1,0.1);
+                DesenhaCubo();
+            glPopMatrix();
+
+        }
+    glPopMatrix();
+
+}
+
+void DesenhaCarro()
+{
+    modeloCarro.ExibeObjeto();
+}
 // **********************************************************************
 //  void display( void )
 //
@@ -496,21 +519,17 @@ void reshape( int w, int h )
 // **********************************************************************
 void display( void )
 {
-
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	DefineLuz();
 
 	glMatrixMode(GL_MODELVIEW);
 
-	/*
-	glPushMatrix();
-        glScalef(0.4,0.4,0.4);
-        testezera2.ExibeObjeto();
-	glPopMatrix();
-*/
     DesenhaCenario();
 
+    DesenhaCombustivel();
+
+    DesenhaCarro();
 
 	glutSwapBuffers();
 }
@@ -524,7 +543,6 @@ void animate()
 {
     static float dt;
     static float AccumTime=0;
-
 #ifdef _WIN32
     DWORD time_now;
     time_now = GetTickCount();
@@ -544,8 +562,11 @@ void animate()
     PosicUser();
 
     AccumTime +=dt;
+    if(carroLigado)
+        CombusTempo -= dt;
 
-    if (AccumTime >=3) // imprime o FPS a cada 3 segundos
+
+    if (AccumTime >=10) // imprime o FPS a cada 3 segundos
     {
         //cout << 1.0/dt << " FPS"<< endl;
         AccumTime = 0;
@@ -562,7 +583,7 @@ void animate()
 void Debug()
 {
     cout << "Angle Horizontal: " << angleHorizontal << " Angle Vertical: " << angleVertical<< endl;
-    cout << "mouseX: " << mouseX << " mouseZ: " << mouseZ<< endl;
+    cout << "mouseX: " << cameraPositionX << " mouseZ: " << cameraPositionZ<< endl;
     cout << "mouseLookX: " << mouseLookX << " mouseLookY: " << mouseLookY<< " mouseLookZ: " << mouseLookZ<< endl;
     cout << "deltaAngleCameraHorizontal: " << deltaAngleCameraHorizontal << " deltaAngleVertical: " << deltaAngleVertical<< endl;
     cout << "xOrigin: " << xOrigin << " yOrigin: " << yOrigin<< endl<< endl;
@@ -586,7 +607,7 @@ void keyboard ( unsigned char key, int x, int y )
     case 'g':
         Debug();
         break;
-    case 'f':
+    case 'f': //Muda a visão
         if(obsY == 40)
         {
             obsX = 0;
@@ -613,14 +634,11 @@ void keyboard ( unsigned char key, int x, int y )
 
 void mouseMove(int x, int y) {
 
-         // this will only be true when the left button is down
          if (xOrigin >= 0) {
 
-            // update deltaAngle
             deltaAngleCameraHorizontal = (x - xOrigin) * cameraHorizontalSpeed;
             deltaAngleVertical = (y - yOrigin) * cameraVerticalSpeed;
 
-            // update camera's direction
             mouseLookX = sin(angleHorizontal + deltaAngleCameraHorizontal);
             mouseLookY = -cos(angleVertical + deltaAngleVertical);
             mouseLookZ = -cos(angleHorizontal + deltaAngleCameraHorizontal);
@@ -629,18 +647,14 @@ void mouseMove(int x, int y) {
 
 void mouseButton(int button, int state, int x, int y) {
 
-	// only start motion if the left button is pressed
 	if (button == GLUT_LEFT_BUTTON) {
-
-		// when the button is released
 		if (state == GLUT_UP) {
-//  cout << endl << "--DELTA ANGLE AT CHANGE = " << deltaAngleCameraHorizontal << "--" << endl;
 			angleHorizontal += deltaAngleCameraHorizontal;
 			angleVertical += deltaAngleVertical;
 			xOrigin = -1;
 			yOrigin = -1;
 		}
-		else  {// state = GLUT_DOWN
+		else  {
 			xOrigin = x;
 			yOrigin = y;
 		}
@@ -703,10 +717,7 @@ int main ( int argc, char** argv )
 	glutSpecialFunc ( pressionaTecla );
 	glutIgnoreKeyRepeat(1);
 	glutSpecialUpFunc(soltaTecla);
-
 	glutIdleFunc ( animate );
-
-	// here are the two new functions
 	glutMouseFunc(mouseButton);
 	glutMotionFunc(mouseMove);
 
