@@ -2,9 +2,14 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug-Windows" />
-	<File name="Temporizador.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="treeNOVO.tri" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="398" topLine="2" />
+			<Cursor1 position="10436" topLine="98" />
+		</Cursor>
+	</File>
+	<File name="mapa2.txt" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="342" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="Temporizador.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -12,19 +17,24 @@
 			<Cursor1 position="200" topLine="9" />
 		</Cursor>
 	</File>
-	<File name="Basico3D.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="SOIL\SOIL.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3099" topLine="108" />
+			<Cursor1 position="176" topLine="1992" />
 		</Cursor>
 	</File>
 	<File name="ferrariNOVO.tri" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="844" topLine="0" />
+			<Cursor1 position="1878" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="SOIL\SOIL.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Temporizador.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="176" topLine="1992" />
+			<Cursor1 position="398" topLine="2" />
+		</Cursor>
+	</File>
+	<File name="Basico3D.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="9134" topLine="345" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

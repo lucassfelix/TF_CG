@@ -68,6 +68,8 @@
 		<Unit filename="Temporizador.cpp" />
 		<Unit filename="Temporizador.h" />
 		<Unit filename="ferrariNOVO.tri" />
+		<Unit filename="mapa2.txt" />
+		<Unit filename="treeNOVO.tri" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
