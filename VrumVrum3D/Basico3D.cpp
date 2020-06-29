@@ -189,12 +189,6 @@ void cameraMovement()
 
 void PosicUser()
 {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(90,AspectRatio,0.01,200);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 	gluLookAt(cameraPositionX, cameraPositionY, cameraPositionZ,   // Posição do Observador
                cameraObserverX, cameraObserverY, cameraObserverZ,     // Posição do Alvo
 			  0.0f,1.0f,0.0f);
@@ -584,21 +578,11 @@ void DesenhaCarro()
 
 void display3d()
 {
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_TEXTURE_2D);
-
-
-
-
     DefineLuz();
 
-    glMatrixMode(GL_MODELVIEW);
     PosicUser();
 
-
     DesenhaCenario();
-
 
 
     DesenhaCarro();
@@ -606,15 +590,6 @@ void display3d()
 
 void display2d()
 {
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_CULL_FACE);
-  glDisable(GL_TEXTURE_2D);
-
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0, 10, 0, 10, 0, 0);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
 
   DesenhaCombustivel();
 
@@ -629,13 +604,21 @@ void display( void )
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(90,AspectRatio,0.01,200);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
     display3d();
 
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, 10, 0, 10, 0.0, 30.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
     display2d();
-
-
-
-
 
 	glutSwapBuffers();
 }
