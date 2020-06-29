@@ -40,10 +40,10 @@ GLfloat AspectRatio, AngY=0;
 void DefineLuz(void)
 {
   // Define cores para um objeto dourado
-  GLfloat LuzAmbiente[]   = {0.4, 0.4, 0.4f } ;
-  GLfloat LuzDifusa[]   = {0.7, 0.7, 0.7};
+  GLfloat LuzAmbiente[]   = {0.6, 0.6, 0.5f } ;
+  GLfloat LuzDifusa[]   = {0.8, 0.8, 0.8};
   GLfloat LuzEspecular[] = {0.9f, 0.9f, 0.9 };
-  GLfloat PosicaoLuz0[]  = {0.0f, 3.0f, 5.0f };  // Posição da Luz
+  GLfloat PosicaoLuz0[]  = {0.0f, 5.0f, 0.0f };
   GLfloat Especularidade[] = {1.0f, 1.0f, 1.0f};
 
    // ****************  Fonte de Luz 0
@@ -105,9 +105,6 @@ float alvoX = obsX+1, alvoY = obsY, alvoZ = obsZ+1;
 float angObsX = 0;
 float angObsY = 0;
 
-//Mouse Look AT
-
-
 
 //Driving Variables
 float steeringSpeed = 0.005;
@@ -134,8 +131,16 @@ void CarController(int action)
     switch(action)
     {
     case 0://ignition
-        deltaMoveHorizontal = 2.0f;
-        carroLigado = true;
+        if(!carroLigado)
+        {
+            deltaMoveHorizontal = 2.0f;
+            carroLigado = true;
+        }
+        else
+        {
+            deltaMoveHorizontal = 0.0f;
+            carroLigado = false;
+        }
         break;
     default:
 
