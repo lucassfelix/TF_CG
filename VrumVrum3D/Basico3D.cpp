@@ -108,25 +108,30 @@ float angObsY = 0;
 
 //Driving Variables
 float steeringSpeed = 0.005;
-float carX = 1.0f, carZ = -1.0f; // Direção do carro
-float deltaAngleSteeringHorizontal = 0.0f;
+float carRotationAngle = 90;
+float carPositionX = 0.0f, carPositionZ = 0.0f;
+float carDirectionX = 0.0f, carDirectionZ = 0.0f; // Direção do carro
 float steeringAngle = 0.0f;
 float deltaMoveHorizontal = 0.0f;
 bool carroLigado = false;
 
+
 //Camera Variables
+bool overhead = false;
+bool cameraMovementToogle = true;
 float angleHorizontal = 0.0f;
 float angleVertical = 0.0f;
 float cameraVerticalSpeed = 0.005;
 float cameraHorizontalSpeed = 0.005;
-float cameraPositionX = 0.0f, cameraPositionZ = 5.0f; //Posição do carro/câmera
-float mouseLookX = 0.0f, mouseLookY = 0.5f, mouseLookZ= -1.0f; //Direação da câmera
+float cameraObserverX = 0.0f, cameraObserverY = 0.0f, cameraObserverZ = -1.0f;
+float cameraPositionX = 0.0f, cameraPositionY = 1.0f, cameraPositionZ = 0.0f; //Posição da câmera
+float cameraLookX = 0.0f, cameraLookY = 0.5f, cameraLookZ= 0.0f; //Direação da câmera
 float deltaAngleCameraHorizontal =0.0f;
 float deltaAngleVertical = 0.0f;
 int xOrigin = -1;
 int yOrigin = -1;
 
-void CarController(int action)
+void controleCarro(int action)
 {
     switch(action)
     {
@@ -143,20 +148,43 @@ void CarController(int action)
         }
         break;
     default:
-
+    case 1: //Curva Direita
+        steeringAngle += 90;
+        break;
+    case 2: //Curva Esquerda
+        steeringAngle -= 90;
         break;
     }
 }
 
-void carMovement(float deltaMoveHorizontal)
+void cameraMovement()
 {
-    steeringAngle += deltaAngleSteeringHorizontal;
-	carX = sin(steeringAngle);
-	carZ = -cos(steeringAngle);
+    carRotationAngle = 90 - (steeringAngle);
+	carDirectionX = sin(steeringAngle*3.14159/180);
+	carDirectionZ = -cos(steeringAngle*3.14159/180);
 
-    cameraPositionX += deltaMoveHorizontal * carX * 0.1f;
-	cameraPositionZ += deltaMoveHorizontal * carZ * 0.1f;
+
+    if(cameraMovementToogle)
+    {
+        cameraPositionX += deltaMoveHorizontal * carDirectionX * 0.1f;
+        cameraPositionZ += deltaMoveHorizontal * carDirectionZ * 0.1f;
+
+        cameraObserverX = cameraPositionX + cameraLookX + carDirectionX;
+        cameraObserverY = cameraPositionY + cameraLookY;
+        cameraObserverZ = cameraPositionZ + cameraLookZ + carDirectionZ;
+    }
+    else
+    {
+        cameraObserverX = carPositionX;
+        cameraObserverZ = carPositionZ;
+
+    }
+    carPositionX += deltaMoveHorizontal * carDirectionX *0.1f;
+    carPositionZ += deltaMoveHorizontal * carDirectionZ *0.1f;
+
+
 }
+
 
 
 void PosicUser()
@@ -167,10 +195,32 @@ void PosicUser()
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(cameraPositionX, 1.0f, cameraPositionZ,   // Posi‹o do Observador
-               cameraPositionX + mouseLookX, 1.0f + mouseLookY , cameraPositionZ +mouseLookZ,     // Posi‹o do Alvo
+	gluLookAt(cameraPositionX, cameraPositionY, cameraPositionZ,   // Posi‹o do Observador
+               cameraObserverX, cameraObserverY, cameraObserverZ,     // Posi‹o do Alvo
 			  0.0f,1.0f,0.0f);
 
+}
+
+void TrocaPerspectiva()
+{
+    if(overhead)
+    {
+        cameraMovementToogle = true;
+        cameraPositionX = carPositionX;
+        cameraPositionY = 1.0f;
+        cameraPositionZ = carPositionZ;
+
+    }
+    else
+    {
+        cameraMovementToogle = false;
+        cameraPositionX = 0.0f;
+        cameraPositionY = 10.0f;
+        cameraPositionZ = 0.0f;
+    }
+
+
+    overhead = !overhead;
 }
 
 
@@ -495,6 +545,10 @@ void DesenhaCombustivel()
 {
     int restoCombus = ceil(CombusTempo/10);
 
+    if(restoCombus == 0)
+        deltaMoveHorizontal = 0.0f;
+
+
     glPushMatrix();
         glColor3ub(255,0,0);
 
@@ -519,7 +573,13 @@ void DesenhaCombustivel()
 
 void DesenhaCarro()
 {
-    modeloCarro.ExibeObjeto();
+    glPushMatrix();
+        glTranslatef(carPositionX,0.0f ,carPositionZ);
+        glPushMatrix();
+            glRotatef(carRotationAngle ,0.0f,1.0f,0.0f);
+            modeloCarro.ExibeObjeto();
+        glPopMatrix();
+    glPopMatrix();
 }
 
 void display3d()
@@ -601,36 +661,39 @@ void animate()
     1.0e-6*(time_now.tv_usec - last_idle_time.tv_usec);
 #endif
 
+//AQui
     if(deltaMoveHorizontal)
-        carMovement(deltaMoveHorizontal);
+    {
+        cameraMovement();
+    }
 
 
+
+//AQUI
 
     AccumTime +=dt;
     if(carroLigado)
-        CombusTempo -= dt;
+        //CombusTempo -= dt;
 
 
     if (AccumTime >=10) // imprime o FPS a cada 3 segundos
     {
-        //cout << 1.0/dt << " FPS"<< endl;
+        cout << 1.0/dt << " FPS"<< endl;
         AccumTime = 0;
     }
 
     // Sa;va o tempo para o pr—ximo ciclo de rendering
     last_idle_time = time_now;
 
-
-    // Redesenha
     glutPostRedisplay();
 }
 
 void Debug()
 {
-    cout << "Angle Horizontal: " << angleHorizontal << " Angle Vertical: " << angleVertical<< endl;
-    cout << "mouseX: " << cameraPositionX << " mouseZ: " << cameraPositionZ<< endl;
-    cout << "mouseLookX: " << mouseLookX << " mouseLookY: " << mouseLookY<< " mouseLookZ: " << mouseLookZ<< endl;
-    cout << "deltaAngleCameraHorizontal: " << deltaAngleCameraHorizontal << " deltaAngleVertical: " << deltaAngleVertical<< endl;
+    cout << "Car direction X: " << carDirectionX << " Car direction Z: " << carDirectionZ << endl;
+    cout << "Car Position X: " << carPositionX << " Car Position Z: " << carPositionZ << endl;
+    cout << "Camera Direction X: " << cameraPositionX + cameraLookX<< " Camera Direction Y: " << cameraPositionY + cameraLookY<< " Camera Direction Z: " << cameraPositionZ + cameraLookZ<< endl;
+    cout << "Steering Angle: " << steeringAngle << " Rotation Angle: " << carRotationAngle << endl;
     cout << "xOrigin: " << xOrigin << " yOrigin: " << yOrigin<< endl<< endl;
 }
 
@@ -647,27 +710,19 @@ void keyboard ( unsigned char key, int x, int y )
       exit ( 0 );   // a tecla ESC for pressionada
       break;
     case 32:
-        CarController(0); //Ignicao
+        controleCarro(0); //Ignicao
+        break;
+    case 'a':
+        controleCarro(2); //Movimento Esquerda
+        break;
+    case 'd':
+        controleCarro(1); //Movimento Direita
         break;
     case 'g':
         Debug();
         break;
     case 'f': //Muda a visão
-        if(obsY == 40)
-        {
-            obsX = 0;
-            obsY = 1;
-            obsZ = 0;
-            angObsY = 0;
-        }
-        else
-        {
-            obsX = 3.2;
-            obsY = 40;
-            obsZ = 2.6;
-            angObsX = 180;
-            angObsY  = -90;
-        }
+        TrocaPerspectiva();
         break;
 
     default:
@@ -681,12 +736,14 @@ void mouseMove(int x, int y) {
 
          if (xOrigin >= 0) {
 
-            deltaAngleCameraHorizontal = (x - xOrigin) * cameraHorizontalSpeed;
+            deltaAngleCameraHorizontal = ((x - xOrigin)) * cameraHorizontalSpeed;
             deltaAngleVertical = (y - yOrigin) * cameraVerticalSpeed;
 
-            mouseLookX = sin(angleHorizontal + deltaAngleCameraHorizontal);
-            mouseLookY = -cos(angleVertical + deltaAngleVertical);
-            mouseLookZ = -cos(angleHorizontal + deltaAngleCameraHorizontal);
+            cameraLookX = sin(angleHorizontal + deltaAngleCameraHorizontal);
+            cameraLookY = -cos(angleVertical + deltaAngleVertical);
+            cameraLookZ = -cos(angleHorizontal + deltaAngleCameraHorizontal);
+
+
 	}
 }
 
@@ -718,12 +775,6 @@ void pressionaTecla ( int a_keys, int x, int y )
 		case GLUT_KEY_F11:
 			glutFullScreen ( ); // Go Into Full Screen Mode
 			break;
-        case GLUT_KEY_LEFT:
-            deltaAngleSteeringHorizontal = -0.1f;
-            break;
-        case GLUT_KEY_RIGHT:
-            deltaAngleSteeringHorizontal = 0.1f;
-            break;
 	    case GLUT_KEY_DOWN:     // When Down Arrow Is Pressed...
 			glutInitWindowSize  ( 700, 500 );
 			break;
@@ -732,13 +783,6 @@ void pressionaTecla ( int a_keys, int x, int y )
 	}
 }
 
-void soltaTecla(int key, int x, int y) {
-
-	switch (key) {
-		case GLUT_KEY_LEFT : deltaAngleSteeringHorizontal = 0;break;
-		case GLUT_KEY_RIGHT : deltaAngleSteeringHorizontal = 0;break;
-	}
-}
 
 // **********************************************************************
 //  void main ( int argc, char** argv )
@@ -760,8 +804,7 @@ int main ( int argc, char** argv )
 	glutReshapeFunc ( reshape );
 	glutKeyboardFunc ( keyboard );
 	glutSpecialFunc ( pressionaTecla );
-	glutIgnoreKeyRepeat(1);
-	glutSpecialUpFunc(soltaTecla);
+
 	glutIdleFunc ( animate );
 	glutMouseFunc(mouseButton);
 	glutMotionFunc(mouseMove);
