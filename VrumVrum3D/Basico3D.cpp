@@ -493,14 +493,18 @@ void DesenhaCombustivel()
     glPushMatrix();
         glColor3ub(255,0,0);
 
-        glTranslatef(cameraPositionX + mouseLookX,mouseLookY,cameraPositionZ + mouseLookZ);
+        glTranslatef(5,5,0);
         for (int i = 0; i < restoCombus ; i++)
         {
 
-            glTranslatef(0,1,0);
+            glTranslatef(0,0.5,0);
             glPushMatrix();
-                glScalef(0.1,0.1,0.1);
-                DesenhaCubo();
+                glBegin(GL_QUADS);
+                    glVertex2f(0.0,0.0);
+                    glVertex2f(0.0,0.5);
+                    glVertex2f(0.5,0.5);
+                    glVertex2f(0.5,0.0);
+                glEnd();
             glPopMatrix();
 
         }
@@ -512,6 +516,45 @@ void DesenhaCarro()
 {
     modeloCarro.ExibeObjeto();
 }
+
+void display3d()
+{
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_2D);
+
+
+
+
+    DefineLuz();
+
+    glMatrixMode(GL_MODELVIEW);
+    PosicUser();
+
+
+    DesenhaCenario();
+
+
+
+    DesenhaCarro();
+}
+
+void display2d()
+{
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_CULL_FACE);
+  glDisable(GL_TEXTURE_2D);
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0, 10, 0, 10, 0, 0);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
+  DesenhaCombustivel();
+
+}
+
 // **********************************************************************
 //  void display( void )
 //
@@ -521,15 +564,13 @@ void display( void )
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-	DefineLuz();
+    display3d();
 
-	glMatrixMode(GL_MODELVIEW);
+    display2d();
 
-    DesenhaCenario();
 
-    DesenhaCombustivel();
 
-    DesenhaCarro();
+
 
 	glutSwapBuffers();
 }
@@ -559,7 +600,6 @@ void animate()
         carMovement(deltaMoveHorizontal);
 
 
-    PosicUser();
 
     AccumTime +=dt;
     if(carroLigado)
