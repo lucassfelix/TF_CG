@@ -1108,7 +1108,7 @@
 	<windows.h>
 	<sys/time.h>
 
-1592850002 source:c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\basico3d.cpp
+1593479445 source:c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\basico3d.cpp
 	<iostream>
 	<cmath>
 	<ctime>
@@ -1120,37 +1120,37 @@
 	<sys/time.h>
 	<GLUT/glut.h>
 
-1592596420 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\gl\glut.h
+1593471466 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\gl\glut.h
 	"freeglut.h"
 
-1592596420 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\gl\freeglut.h
+1593471466 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\gl\freeglut.h
 	"freeglut_std.h"
 	"freeglut_ext.h"
 
-1592596420 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\gl\freeglut_std.h
+1593471466 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\gl\freeglut_std.h
 	<windows.h>
 	<GL/gl.h>
 	<GL/glu.h>
 
-1592596420 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\gl\freeglut_ext.h
+1593471466 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\gl\freeglut_ext.h
 
-1592596420 source:c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\image_dxt.cpp
+1593471466 source:c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\image_dxt.cpp
 	"image_DXT.h"
 	<math.h>
 	<stdlib.h>
 	<string.h>
 	<stdio.h>
 
-1592596420 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\image_dxt.h
+1593471466 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\image_dxt.h
 
-1592596420 source:c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\image_helper.cpp
+1593471466 source:c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\image_helper.cpp
 	"image_helper.h"
 	<stdlib.h>
 	<math.h>
 
-1592596420 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\image_helper.h
+1593471466 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\image_helper.h
 
-1592596420 source:c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\soil.cpp
+1593471466 source:c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\soil.cpp
 	<windows.h>
 	<wingdi.h>
 	<GL/gl.h>
@@ -1166,12 +1166,12 @@
 	<string.h>
 	<iostream>
 
-1592596420 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\soil.h
+1593471466 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\soil.h
 
-1592596420 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\stb_image_aug.h
+1593471466 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\stb_image_aug.h
 	<stdio.h>
 
-1592596420 source:c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\stb_image_aug.cpp
+1593471466 source:c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\stb_image_aug.cpp
 	"stb_image_aug.h"
 	<math.h>
 	<string.h>
@@ -1183,14 +1183,14 @@
 	"stbi_DDS_aug.h"
 	"stbi_DDS_aug_c.h"
 
-1592596420 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\stbi_dds_aug.h
+1593471466 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\stbi_dds_aug.h
 
-1592596420 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\stbi_dds_aug_c.h
+1593471466 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\soil\stbi_dds_aug_c.h
 
-1592596420 source:c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\temporizador.cpp
+1593471466 source:c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\temporizador.cpp
 	"Temporizador.h"
 
-1592596420 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\temporizador.h
+1593471466 c:\users\pedro prokath\desktop\tf_cg\vrumvrum3d\temporizador.h
 	<iostream>
 	<windows.h>
 	<sys/time.h>
