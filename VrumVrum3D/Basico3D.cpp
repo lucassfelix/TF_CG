@@ -591,16 +591,57 @@ void reshape( int w, int h )
 	PosicUser();
 
 }
-float CombusTempo = 10;
+
+//************************************************************************
+float CombusTempo = 20;
+
+vector<TPoint> MatrixCenario = PreencheMatrix();
+//[0] = posicao | [1] = direcao
+typedef struct{
+    int pos,dir;
+    float cordX, cordY;
+
+    void Set(int p, int d, float x, float y)
+    {
+        pos = p;
+        dir = d;
+        cordX = x;
+        cordY = y;
+    }
+
+} Inimigo;
+
+Inimigo makeEnemy(int p, int d, float x, float y)
+{
+    Inimigo resp;
+    resp.Set(p,d,x,y);
+    return resp;
+}
+
+vector<Inimigo> makePosEnemys()
+{
+    vector<Inimigo> resp;
+    Inimigo e1 = makeEnemy(1401,1001,0.0,0.0);
+    resp.push_back(e1);
+    return resp;
+}
+
+vector<Inimigo> posEnemys = makePosEnemys();
+
+int hh = 0;
+int direcao = 1001;
+int a = 740;
+
+//************************************************************************
 
 
 
 
 void inicializaCombustivel()
 {
-    combusA.Set(40,0.0,40);
-    combusB.Set(5,0.0,5);
-    combusC.Set(15,0.0,10);
+    combusA.Set(37,1515,35);
+    combusB.Set(5,202,2);
+    combusC.Set(18,735,15);
 
     combustiveisMapa.push_back(combusA);
     combustiveisMapa.push_back(combusB);
@@ -612,7 +653,7 @@ void DesenhaBarrilCombustivel()
     for (int i = 0; i < combustiveisMapa.size(); i++)
     {
         glPushMatrix();
-            glTranslatef(combustiveisMapa[i].X,combustiveisMapa[i].Y,combustiveisMapa[i].Z);
+            glTranslatef(combustiveisMapa[i].X,0,combustiveisMapa[i].Z);
             glScalef(0.3,0.3,0.3);
             cactus.ExibeObjeto();
         glPopMatrix();
@@ -665,10 +706,10 @@ void colisaoCarro()
 {
     for(int i = 0; i < combustiveisMapa.size(); i++)
     {
-        if(upRightX )
+        if(combustiveisMapa[i].Y == a)
         {
-            CombusTempo = 100;
-            combustiveisMapa[i].Set(100,100,100);
+            CombusTempo = 20;
+            //combustiveisMapa[i].Set(100,100,100);
         }
     }
 
@@ -696,48 +737,6 @@ void display2d()
   DesenhaBarraCombustivel();
 
 }
-
-// **********************************************************************
-//  void display( void )
-//
-//
-// **********************************************************************
-vector<TPoint> MatrixCenario = PreencheMatrix();
-//[0] = posicao | [1] = direcao
-typedef struct{
-    int pos,dir;
-    float cordX, cordY;
-
-    void Set(int p, int d, float x, float y)
-    {
-        pos = p;
-        dir = d;
-        cordX = x;
-        cordY = y;
-    }
-
-} Inimigo;
-
-Inimigo makeEnemy(int p, int d, float x, float y)
-{
-    Inimigo resp;
-    resp.Set(p,d,x,y);
-    return resp;
-}
-
-vector<Inimigo> makePosEnemys()
-{
-    vector<Inimigo> resp;
-    Inimigo e1 = makeEnemy(1401,1001,0.0,0.0);
-    resp.push_back(e1);
-    return resp;
-}
-
-vector<Inimigo> posEnemys = makePosEnemys();
-
-int hh = 0;
-int direcao = 1001;
-int a = 740;
 
 void SyncMatrixJogador()
 {
@@ -793,37 +792,37 @@ void SyncMatrixJogador()
     }
 }
 
-void SyncMatrixEnemy(int id, int atual)
+void SyncMatrixEnemy(int id)
 {
     int caso = posEnemys[id].dir%4;
     switch(caso)
     {
     case 0:
-        if(MatrixCenario[atual+1].Y != 1)
+        if(MatrixCenario[posEnemys[id].pos+1].Y != 1)
             //ingicao = 0
 
-        atual++;
+        posEnemys[id].pos++;
         break;
 
     case 1:
-        if(MatrixCenario[atual+40].Y != 1)
+        if(MatrixCenario[posEnemys[id].pos+40].Y != 1)
             //ignicao = 0
 
-        atual += 40;
+        posEnemys[id].pos += 40;
         break;
 
     case 2:
-        if(MatrixCenario[atual-1].Y != 1)
+        if(MatrixCenario[posEnemys[id].pos-1].Y != 1)
             //ignicao = 0
 
-        atual--;
+        posEnemys[id].pos--;
         break;
 
     case 3:
-        if(MatrixCenario[atual-40].Y != 1)
+        if(MatrixCenario[posEnemys[id].pos-40].Y != 1)
             //ignicao = 0
 
-        atual -=40;
+        posEnemys[id].pos -=40;
         break;
     }
 }
