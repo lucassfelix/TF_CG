@@ -504,6 +504,7 @@ vector<TPoint> PreencheMatrix()
     return resp;
 }
 
+
 void DesenhaCenario()
 {
     ifstream inFile;
@@ -594,19 +595,19 @@ void reshape( int w, int h )
 
 //************************************************************************
 float CombusTempo = 20;
-
+float speedInimigo = 1.0;
 vector<TPoint> MatrixCenario = PreencheMatrix();
 //[0] = posicao | [1] = direcao
 typedef struct{
     int pos,dir;
-    float cordX, cordY;
+    float cordX, cordZ;
 
     void Set(int p, int d, float x, float y)
     {
         pos = p;
         dir = d;
         cordX = x;
-        cordY = y;
+        cordZ = y;
     }
 
 } Inimigo;
@@ -621,12 +622,35 @@ Inimigo makeEnemy(int p, int d, float x, float y)
 vector<Inimigo> makePosEnemys()
 {
     vector<Inimigo> resp;
-    Inimigo e1 = makeEnemy(1401,1001,0.0,0.0);
+    Inimigo e1 = makeEnemy(1401,1001,10.0,10.0);
     resp.push_back(e1);
     return resp;
 }
 
 vector<Inimigo> posEnemys = makePosEnemys();
+
+void deslocaInimigo()
+{
+    for(int i = 0; i < posEnemys.size(); i ++)
+    {
+        switch (posEnemys[i].dir%4)
+        {
+        case 0:
+            posEnemys[i].cordX += 0.1;
+            break;
+        case 1:
+            posEnemys[i].cordZ -= 0.1;
+            break;
+        case 2:
+            posEnemys[i].cordX -= 0.1;
+            break;
+        case 3:
+            posEnemys[i].cordZ += 0.1;
+            break;
+        }
+
+    }
+}
 
 int hh = 0;
 int direcao = 1001;
@@ -690,6 +714,19 @@ void DesenhaBarraCombustivel()
 
 }
 
+void DesenhaInimigos()
+{
+    for(int i = 0; i < posEnemys.size(); i++)
+    {
+        glPushMatrix();
+            glTranslatef(posEnemys[i].cordX, 0.0, posEnemys[i].cordZ);
+            glScalef(0.4,0.0,0.4);
+            dogao.ExibeObjeto();
+        glPopMatrix();
+    }
+}
+
+
 void DesenhaCarro()
 {
     glPushMatrix();
@@ -727,7 +764,9 @@ void display3d()
 
     DesenhaCarro();
 
-    colisaoCarro();
+    DesenhaInimigos();
+
+
 
 }
 
@@ -831,8 +870,7 @@ void MovimentaEnemys()
 {
     for(int i = 0; i < posEnemys.size(); i++)
     {
-       dogao.ExibeObjeto();
-       SyncMatrixEnemy(i,posEnemys[i].pos);
+       SyncMatrixEnemy(i);
     }
 }
 
@@ -906,7 +944,9 @@ void animate()
         cameraMovement();
     }
 
-
+    colisaoCarro();
+    deslocaInimigo();
+    MovimentaEnemys();
 
 //AQUI
 
