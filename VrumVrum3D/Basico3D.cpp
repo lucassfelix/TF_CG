@@ -14,6 +14,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <random>
 
 using namespace std;
 
@@ -790,43 +791,70 @@ void SyncMatrixJogador()
         {
         case 0:
             if(MatrixCenario[a+1].Y != 1)
-                controleCarro(0);
-                //ingicao = 0
-
-            //if(ignicao != 0)
-            if(carroLigado)
-                a++;
+            {
+               controleCarro(0);
+            } else if(carroLigado)
+                {
+                    a++;
+                }
             break;
 
         case 1:
             if(MatrixCenario[a+40].Y != 1)
-                controleCarro(0);
-                //ignicao = 0
-
-            //if(ignicao != 0)
-            if(carroLigado)
-                a += 40;
+            {
+               controleCarro(0);
+            } else if(carroLigado)
+                {
+                    a += 40;
+                }
             break;
 
         case 2:
             if(MatrixCenario[a-1].Y != 1)
-                controleCarro(0);
-                //ignicao = 0
-
-            //if(ignicao != 0)
-            if(carroLigado)
-                a--;
+            {
+               controleCarro(0);
+            } else if(carroLigado)
+                {
+                    a--;
+                }
             break;
 
         case 3:
             if(MatrixCenario[a-40].Y != 1)
-                controleCarro(0);
-                //ignicao = 0
-
-            //if(ignicao != 0)
-            if(carroLigado)
-                a -=40;
+            {
+               controleCarro(0);
+            } else if(carroLigado)
+            {
+               a -=40;
+            }
             break;
+        }
+    }
+}
+
+int escolheDirecao(int id)
+{
+    while(true)
+    {
+        int randNum = rand()%(3-0 + 1);
+        switch(randNum)
+        {
+        case 0:
+            if(MatrixCenario[posEnemys[id].pos+1].Y == 1)
+                return 0;
+                break;
+        case 1:
+            if(MatrixCenario[posEnemys[id].pos+40].Y == 1)
+                return 1;
+                break;
+        case 2:
+            if(MatrixCenario[posEnemys[id].pos-1].Y == 1)
+                return 2;
+                break;
+        case 3:
+            if(MatrixCenario[posEnemys[id].pos-40].Y == 1)
+                return 3;
+                break;
         }
     }
 }
@@ -838,30 +866,42 @@ void SyncMatrixEnemy(int id)
     {
     case 0:
         if(MatrixCenario[posEnemys[id].pos+1].Y != 1)
-            //ingicao = 0
+        {
+            posEnemys[id].dir = escolheDirecao(id);
 
-        posEnemys[id].pos++;
+        } else {
+            posEnemys[id].pos++;
+        }
         break;
 
     case 1:
         if(MatrixCenario[posEnemys[id].pos+40].Y != 1)
-            //ignicao = 0
+        {
+            posEnemys[id].dir = escolheDirecao(id);
 
-        posEnemys[id].pos += 40;
+        } else {
+            posEnemys[id].pos += 40;
+        }
         break;
 
     case 2:
         if(MatrixCenario[posEnemys[id].pos-1].Y != 1)
-            //ignicao = 0
+        {
+            posEnemys[id].dir = escolheDirecao(id);
 
-        posEnemys[id].pos--;
+        } else {
+            posEnemys[id].pos--;
+        }
         break;
 
     case 3:
         if(MatrixCenario[posEnemys[id].pos-40].Y != 1)
-            //ignicao = 0
+        {
+           posEnemys[id].dir = escolheDirecao(id);
 
-        posEnemys[id].pos -=40;
+        } else {
+            posEnemys[id].pos -=40;
+        }
         break;
     }
 }
