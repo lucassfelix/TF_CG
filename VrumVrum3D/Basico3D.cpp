@@ -76,29 +76,6 @@ void DefineLuz(void)
 }
 
 
-// **********************************************************************
-//  void init(void)
-//		Inicializa os parâmetros globais de OpenGL
-//
-// **********************************************************************
-void init(void)
-{
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Fundo de tela preto
-
-	glShadeModel(GL_SMOOTH);
-	glColorMaterial ( GL_FRONT, GL_AMBIENT_AND_DIFFUSE );
-	glEnable(GL_DEPTH_TEST);
-	glEnable ( GL_CULL_FACE );
-
-    // Obtem o tempo inicial
-#ifdef WIN32
-    last_idle_time = GetTickCount();
-#else
-    gettimeofday (&last_idle_time, NULL);
-#endif
-
-}
-
 
 float obsX = 0, obsY = 1, obsZ = 0;
 float alvoX = obsX+1, alvoY = obsY, alvoZ = obsZ+1;
@@ -155,6 +132,12 @@ void controleCarro(int action)
         steeringAngle -= 90;
         break;
     }
+}
+
+void colisaoCarro()
+{
+
+
 }
 
 void cameraMovement()
@@ -239,6 +222,7 @@ vector<int> hexToColor(string Entrada)
 
     return resp;
 }
+
 
 // Struct para armazenar um ponto X,Y,Z
 typedef struct
@@ -334,6 +318,7 @@ public:
 Objeto3D arvore("treeNOVO");
 Objeto3D casa("casaNOVO");
 Objeto3D modeloCarro("ferrariNOVO");
+Objeto3D cactus("cactus");
 
 // **********************************************************************
 //  Funções de Desenho
@@ -533,20 +518,49 @@ void reshape( int w, int h )
 	PosicUser();
 
 }
-float CombusTempo = 100;
+float CombusTempo = 10;
 
-void DesenhaCombustivel()
+
+TPoint combusA ,combusB, combusC;
+
+
+
+vector<TPoint> combustiveisMapa;
+
+void inicializaCombustivel()
 {
-    int restoCombus = ceil(CombusTempo/10);
+    combusA.Set(40,0.0,40);
+    combusB.Set(5,0.0,5);
+    combusC.Set(15,0.0,10);
 
+    combustiveisMapa.push_back(combusA);
+    combustiveisMapa.push_back(combusB);
+    combustiveisMapa.push_back(combusC);
+}
+
+void DesenhaBarrilCombustivel()
+{
+    for (int i = 0; i < combustiveisMapa.size(); i++)
+    {
+        glPushMatrix();
+            glTranslatef(combustiveisMapa[i].X,combustiveisMapa[i].Y,combustiveisMapa[i].Z);
+            glScalef(0.3,0.3,0.3);
+            cactus.ExibeObjeto();
+        glPopMatrix();
+    }
+}
+
+void DesenhaBarraCombustivel()
+{
+    int restoCombus = ceil(CombusTempo);
     if(restoCombus == 0)
         deltaMoveHorizontal = 0.0f;
-
 
     glPushMatrix();
         glColor3ub(255,0,0);
 
-        glTranslatef(5,5,0);
+        glTranslatef(0.2,0.2,0);
+
         for (int i = 0; i < restoCombus ; i++)
         {
 
@@ -554,13 +568,14 @@ void DesenhaCombustivel()
             glPushMatrix();
                 glBegin(GL_QUADS);
                     glVertex2f(0.0,0.0);
-                    glVertex2f(0.0,0.5);
-                    glVertex2f(0.5,0.5);
-                    glVertex2f(0.5,0.0);
+                    glVertex2f(0.0,0.2);
+                    glVertex2f(0.2,0.2);
+                    glVertex2f(0.2,0.0);
                 glEnd();
             glPopMatrix();
-
         }
+
+
     glPopMatrix();
 
 }
@@ -584,6 +599,7 @@ void display3d()
 
     DesenhaCenario();
 
+    DesenhaBarrilCombustivel();
 
     DesenhaCarro();
 }
@@ -591,7 +607,7 @@ void display3d()
 void display2d()
 {
 
-  DesenhaCombustivel();
+  DesenhaBarraCombustivel();
 
 }
 
@@ -603,6 +619,11 @@ void display2d()
 void display( void )
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
 
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity();
@@ -617,6 +638,11 @@ void display( void )
     glOrtho(0, 10, 0, 10, 0.0, 30.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
 
     display2d();
 
@@ -656,7 +682,7 @@ void animate()
 
     AccumTime +=dt;
     if(carroLigado)
-        //CombusTempo -= dt;
+        CombusTempo -= dt;
 
 
     if (AccumTime >=10) // imprime o FPS a cada 3 segundos
@@ -766,7 +792,29 @@ void pressionaTecla ( int a_keys, int x, int y )
 	}
 }
 
+void init(void)
+{
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Fundo de tela preto
 
+	glShadeModel(GL_SMOOTH);
+	glColorMaterial ( GL_FRONT, GL_AMBIENT_AND_DIFFUSE );
+	glEnable(GL_DEPTH_TEST);
+	glEnable ( GL_CULL_FACE );
+
+
+    inicializaCombustivel();
+
+
+
+
+    // Obtem o tempo inicial
+#ifdef WIN32
+    last_idle_time = GetTickCount();
+#else
+    gettimeofday (&last_idle_time, NULL);
+#endif
+
+}
 // **********************************************************************
 //  void main ( int argc, char** argv )
 //
@@ -778,7 +826,7 @@ int main ( int argc, char** argv )
 	glutInitDisplayMode (GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGB );
 	glutInitWindowPosition (0,0);
 	glutInitWindowSize  ( 700, 500 );
-	glutCreateWindow    ( "Computacao Grafica - Exemplo Basico 3D" );
+	glutCreateWindow    ( "Racing 3D" );
 
 	init ();
     //system("pwd");
@@ -795,4 +843,13 @@ int main ( int argc, char** argv )
 	glutMainLoop ( );
 	return 0;
 }
+
+// **********************************************************************
+//  void init(void)
+//		Inicializa os parâmetros globais de OpenGL
+//
+// **********************************************************************
+
+
+
 
