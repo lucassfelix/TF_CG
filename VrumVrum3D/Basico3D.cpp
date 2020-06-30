@@ -108,6 +108,12 @@ float deltaAngleVertical = 0.0f;
 int xOrigin = -1;
 int yOrigin = -1;
 
+
+
+
+
+
+
 void controleCarro(int action)
 {
     switch(action)
@@ -134,11 +140,7 @@ void controleCarro(int action)
     }
 }
 
-void colisaoCarro()
-{
 
-
-}
 
 void cameraMovement()
 {
@@ -240,6 +242,8 @@ typedef struct
     }
 } TPoint;
 
+TPoint combusA ,combusB, combusC;
+vector<TPoint> combustiveisMapa;
 // Struct para armazenar um triângulo
 typedef struct
 {
@@ -589,11 +593,7 @@ void reshape( int w, int h )
 float CombusTempo = 10;
 
 
-TPoint combusA ,combusB, combusC;
 
-
-
-vector<TPoint> combustiveisMapa;
 
 void inicializaCombustivel()
 {
@@ -659,6 +659,20 @@ void DesenhaCarro()
     glPopMatrix();
 }
 
+
+void colisaoCarro()
+{
+    for(int i = 0; i < combustiveisMapa.size(); i++)
+    {
+        if(upRightX )
+        {
+            CombusTempo = 100;
+            combustiveisMapa[i].Set(100,100,100);
+        }
+    }
+
+}
+
 void display3d()
 {
     DefineLuz();
@@ -670,6 +684,9 @@ void display3d()
     DesenhaBarrilCombustivel();
 
     DesenhaCarro();
+
+    colisaoCarro();
+
 }
 
 void display2d()
