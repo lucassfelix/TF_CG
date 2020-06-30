@@ -623,8 +623,29 @@ Inimigo makeEnemy(int p, int d, float x, float y)
 vector<Inimigo> makePosEnemys()
 {
     vector<Inimigo> resp;
-    Inimigo e1 = makeEnemy(1401,1001,10.0,10.0);
-    resp.push_back(e1);
+    Inimigo e = makeEnemy(1355,1001,33.0,35.0);
+    resp.push_back(e);
+
+    e = makeEnemy(1490,1000,37.0,10.0);
+    resp.push_back(e);
+     e = makeEnemy(1043,1001,26.0,3.0);
+    resp.push_back(e);
+     e = makeEnemy(722,1001,18.0,2.0);
+    resp.push_back(e);
+    //e = makeEnemy(740,1001,18.0,20.0);
+    //resp.push_back(e);
+    e = makeEnemy(1060,1000,26.0,20.0);
+    resp.push_back(e);
+     e = makeEnemy(140,1001,3.0,20.0);
+    resp.push_back(e);
+     e = makeEnemy(114,1001,2.0,34.0);
+    resp.push_back(e);
+    e = makeEnemy(754,1001,18.0,34.0);
+    resp.push_back(e);
+     e = makeEnemy(994,1001,24.0,34.0);
+    resp.push_back(e);
+
+
     return resp;
 }
 
@@ -721,7 +742,7 @@ void DesenhaInimigos()
     {
         glPushMatrix();
             glTranslatef(posEnemys[i].cordX, 0.0, posEnemys[i].cordZ);
-            glScalef(0.4,0.0,0.4);
+            glScalef(0.4,0.4,0.4);
             dogao.ExibeObjeto();
         glPopMatrix();
     }
@@ -748,6 +769,17 @@ void colisaoCarro()
         {
             CombusTempo = 20;
             //combustiveisMapa[i].Set(100,100,100);
+        }
+    }
+
+    for(int i = 0; i < posEnemys.size(); i++)
+    {
+
+        if(posEnemys[i].pos == a)
+        {
+            cout << "VOCÊ ATROPELOU UM CACHORRO" << endl;
+            cout << "FIM DE JOGO!" << endl;
+            exit ( 0 );
         }
     }
 
@@ -800,7 +832,7 @@ void SyncMatrixJogador()
             break;
 
         case 1:
-            if(MatrixCenario[a+40].Y != 1)
+            if(MatrixCenario[a+40].Y  != 1)
             {
                controleCarro(0);
             } else if(carroLigado)
@@ -841,20 +873,32 @@ int escolheDirecao(int id)
         {
         case 0:
             if(MatrixCenario[posEnemys[id].pos+1].Y == 1)
+            {
                 return 0;
-                break;
+
+            }
+            break;
         case 1:
             if(MatrixCenario[posEnemys[id].pos+40].Y == 1)
+            {
                 return 1;
-                break;
+
+            }
+            break;
         case 2:
             if(MatrixCenario[posEnemys[id].pos-1].Y == 1)
+            {
                 return 2;
-                break;
+
+            }
+            break;
         case 3:
             if(MatrixCenario[posEnemys[id].pos-40].Y == 1)
+            {
                 return 3;
-                break;
+
+            }
+            break;
         }
     }
 }
@@ -937,6 +981,7 @@ void display( void )
         SyncMatrixJogador();
         //movimenta enemys
         //cout << "teste flood" << endl;
+
     }
 
     hh++;
@@ -986,7 +1031,7 @@ void animate()
 
     colisaoCarro();
     deslocaInimigo();
-    MovimentaEnemys();
+     MovimentaEnemys();
 
 //AQUI
 

@@ -1195,13 +1195,14 @@
 	<windows.h>
 	<sys/time.h>
 
-1593480601 source:c:\users\lucas\documents\faculdade\cg\tf_cg\vrumvrum3d\basico3d.cpp
+1593491439 source:c:\users\lucas\documents\faculdade\cg\tf_cg\vrumvrum3d\basico3d.cpp
 	<iostream>
 	<cmath>
 	<ctime>
 	<vector>
 	<string>
 	<fstream>
+	<random>
 	<windows.h>
 	"gl\glut.h"
 	<sys/time.h>
