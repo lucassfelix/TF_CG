@@ -334,7 +334,7 @@ public:
 Objeto3D arvore("treeNOVO");
 Objeto3D casa("casaNOVO");
 Objeto3D modeloCarro("ferrariNOVO");
-
+Objeto3D dogao("dogNOVO");
 // **********************************************************************
 //  Funções de Desenho
 //
@@ -427,7 +427,7 @@ void DesenhaItem(int item)
     case 3: //Árvore
         {
             glPushMatrix();
-                glScalef(0.4,0.4,0.4);
+                glScalef(0.4,1,0.4);
                 arvore.ExibeObjeto();
             glPopMatrix();
             break;
@@ -437,7 +437,7 @@ void DesenhaItem(int item)
         {
             glPushMatrix();
                 glRotatef(90,0,1,0);
-                glScalef(1.5,1,1.5); //mudar escala
+                glScalef(2,4,2); //mudar escala
                 casa.ExibeObjeto();
             glPopMatrix();
             break;
@@ -670,7 +670,36 @@ void display2d()
 // **********************************************************************
 vector<TPoint> MatrixCenario = PreencheMatrix();
 //[0] = posicao | [1] = direcao
-vector<vector<int>> posEnemys = {{1401,1}};
+typedef struct{
+    int pos,dir;
+    float cordX, cordY;
+
+    void Set(int p, int d, float x, float y)
+    {
+        pos = p;
+        dir = d;
+        cordX = x;
+        cordY = y;
+    }
+
+} Inimigo;
+
+Inimigo makeEnemy(int p, int d, float x, float y)
+{
+    Inimigo resp;
+    resp.Set(p,d,x,y);
+    return resp;
+}
+
+vector<Inimigo> makePosEnemys()
+{
+    vector<Inimigo> resp;
+    Inimigo e1 = makeEnemy(1401,1001,0.0,0.0);
+    resp.push_back(e1);
+    return resp;
+}
+
+vector<Inimigo> posEnemys = makePosEnemys();
 
 int hh = 0;
 int direcao = 1001;
@@ -732,39 +761,35 @@ void SyncMatrixJogador()
 
 void SyncMatrixEnemy(int id, int atual)
 {
-    int caso = posEnemys[id][1]%4;
+    int caso = posEnemys[id].dir%4;
     switch(caso)
     {
     case 0:
         if(MatrixCenario[atual+1].Y != 1)
             //ingicao = 0
 
-        //if(ignicao != 0)
-            atual++;
+        atual++;
         break;
 
     case 1:
         if(MatrixCenario[atual+40].Y != 1)
             //ignicao = 0
 
-        //if(ignicao != 0)
-            atual += 40;
+        atual += 40;
         break;
 
     case 2:
         if(MatrixCenario[atual-1].Y != 1)
             //ignicao = 0
 
-        //if(ignicao != 0)
-            atual--;
+        atual--;
         break;
 
     case 3:
         if(MatrixCenario[atual-40].Y != 1)
             //ignicao = 0
 
-        //if(ignicao != 0)
-            atual -=40;
+        atual -=40;
         break;
     }
 }
@@ -772,7 +797,10 @@ void SyncMatrixEnemy(int id, int atual)
 void MovimentaEnemys()
 {
     for(int i = 0; i < posEnemys.size(); i++)
-        SyncMatrixEnemy(i,posEnemys[i][0]);
+    {
+       dogao.ExibeObjeto();
+       SyncMatrixEnemy(i,posEnemys[i].pos);
+    }
 }
 
 void display( void )
