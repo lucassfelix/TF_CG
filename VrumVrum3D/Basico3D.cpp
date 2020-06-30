@@ -1,8 +1,8 @@
 // **********************************************************************
-// PUCRS/Escola Politécnica
-// COMPUTAÇÃO GRÁFICA
+// PUCRS/Escola PolitÔøΩcnica
+// COMPUTAÔøΩÔøΩO GRÔøΩFICA
 //
-// Programa básico para criar aplicacoes 3D em OpenGL
+// Programa bÔøΩsico para criar aplicacoes 3D em OpenGL
 //
 // Marcio Sarroglia Pinho
 // pinho@pucrs.br
@@ -50,12 +50,12 @@ void DefineLuz(void)
 
  glEnable ( GL_COLOR_MATERIAL );
 
-   // Habilita o uso de iluminação
+   // Habilita o uso de iluminaÔøΩÔøΩo
   glEnable(GL_LIGHTING);
 
   // Ativa o uso da luz ambiente
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LuzAmbiente);
-  // Define os parametros da luz número Zero
+  // Define os parametros da luz nÔøΩmero Zero
   glLightfv(GL_LIGHT0, GL_AMBIENT, LuzAmbiente);
   glLightfv(GL_LIGHT0, GL_DIFFUSE, LuzDifusa  );
   glLightfv(GL_LIGHT0, GL_SPECULAR, LuzEspecular  );
@@ -68,36 +68,13 @@ void DefineLuz(void)
   // Define a reflectancia do material
   glMaterialfv(GL_FRONT,GL_SPECULAR, Especularidade);
 
-  // Define a concentraçãoo do brilho.
+  // Define a concentraÔøΩÔøΩoo do brilho.
   // Quanto maior o valor do Segundo parametro, mais
-  // concentrado será o brilho. (Valores válidos: de 0 a 128)
+  // concentrado serÔøΩ o brilho. (Valores vÔøΩlidos: de 0 a 128)
   glMateriali(GL_FRONT,GL_SHININESS,51);
 
 }
 
-
-// **********************************************************************
-//  void init(void)
-//		Inicializa os par‚metros globais de OpenGL
-//
-// **********************************************************************
-void init(void)
-{
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Fundo de tela preto
-
-	glShadeModel(GL_SMOOTH);
-	glColorMaterial ( GL_FRONT, GL_AMBIENT_AND_DIFFUSE );
-	glEnable(GL_DEPTH_TEST);
-	glEnable ( GL_CULL_FACE );
-
-    // Obtem o tempo inicial
-#ifdef WIN32
-    last_idle_time = GetTickCount();
-#else
-    gettimeofday (&last_idle_time, NULL);
-#endif
-
-}
 
 
 float obsX = 0, obsY = 1, obsZ = 0;
@@ -110,7 +87,7 @@ float angObsY = 0;
 float steeringSpeed = 0.005;
 float carRotationAngle = 90;
 float carPositionX = 0.0f, carPositionZ = 0.0f;
-float carDirectionX = 0.0f, carDirectionZ = 0.0f; // DireÁ„o do carro
+float carDirectionX = 0.0f, carDirectionZ = 0.0f; // DireÔøΩÔøΩo do carro
 float steeringAngle = 0.0f;
 float deltaMoveHorizontal = 0.0f;
 bool carroLigado = false;
@@ -124,12 +101,18 @@ float angleVertical = 0.0f;
 float cameraVerticalSpeed = 0.005;
 float cameraHorizontalSpeed = 0.005;
 float cameraObserverX = 0.0f, cameraObserverY = 0.0f, cameraObserverZ = -1.0f;
-float cameraPositionX = 0.0f, cameraPositionY = 1.0f, cameraPositionZ = 0.0f; //PosiÁ„o da c‚mera
-float cameraLookX = 0.0f, cameraLookY = 0.5f, cameraLookZ= 0.0f; //DireaÁ„o da c‚mera
+float cameraPositionX = 0.0f, cameraPositionY = 1.0f, cameraPositionZ = 0.0f; //PosiÔøΩÔøΩo da cÔøΩmera
+float cameraLookX = 0.0f, cameraLookY = 0.5f, cameraLookZ= 0.0f; //DireaÔøΩÔøΩo da cÔøΩmera
 float deltaAngleCameraHorizontal =0.0f;
 float deltaAngleVertical = 0.0f;
 int xOrigin = -1;
 int yOrigin = -1;
+
+
+
+
+
+
 
 void controleCarro(int action)
 {
@@ -156,6 +139,8 @@ void controleCarro(int action)
         break;
     }
 }
+
+
 
 void cameraMovement()
 {
@@ -189,8 +174,8 @@ void cameraMovement()
 
 void PosicUser()
 {
-	gluLookAt(cameraPositionX, cameraPositionY, cameraPositionZ,   // Posição do Observador
-               cameraObserverX, cameraObserverY, cameraObserverZ,     // Posição do Alvo
+	gluLookAt(cameraPositionX, cameraPositionY, cameraPositionZ,   // PosiÔøΩÔøΩo do Observador
+               cameraObserverX, cameraObserverY, cameraObserverZ,     // PosiÔøΩÔøΩo do Alvo
 			  0.0f,1.0f,0.0f);
 
 }
@@ -218,7 +203,7 @@ void TrocaPerspectiva()
 }
 
 
-//FunÁ„o que transforma cÛdigo hexadecimal em uma cor de openGL
+//FunÔøΩÔøΩo que transforma cÔøΩdigo hexadecimal em uma cor de openGL
 vector<int> hexToColor(string Entrada)
 {
     string aux;
@@ -240,6 +225,7 @@ vector<int> hexToColor(string Entrada)
     return resp;
 }
 
+
 // Struct para armazenar um ponto X,Y,Z
 typedef struct
 {
@@ -256,7 +242,9 @@ typedef struct
     }
 } TPoint;
 
-// Struct para armazenar um tri‚ngulo
+TPoint combusA ,combusB, combusC;
+vector<TPoint> combustiveisMapa;
+// Struct para armazenar um triÔøΩngulo
 typedef struct
 {
     TPoint P1, P2, P3;
@@ -330,13 +318,15 @@ public:
     }
 };
 
-//DeclaraÁ„o de Objetos3D
+//DeclaraÔøΩÔøΩo de Objetos3D
 Objeto3D arvore("treeNOVO");
 Objeto3D casa("casaNOVO");
 Objeto3D modeloCarro("ferrariNOVO");
 Objeto3D dogao("dogNOVO");
+Objeto3D cactus("cactus");
+
 // **********************************************************************
-//  FunÁıes de Desenho
+//  FunÔøΩÔøΩes de Desenho
 //
 // **********************************************************************
 
@@ -424,7 +414,7 @@ void DesenhaItem(int item)
             break;
         }
 
-    case 3: //¡rvore
+    case 3: //ÔøΩrvore
         {
             glPushMatrix();
                 glScalef(0.4,1,0.4);
@@ -586,10 +576,10 @@ void DesenhaCenario()
 void reshape( int w, int h )
 {
 
-	// Evita divisão por zero, no caso de uam janela com largura 0.
+	// Evita divisÔøΩo por zero, no caso de uam janela com largura 0.
 	if(h == 0) h = 1;
-    // Ajusta a relação entre largura e altura para evitar distorção na imagem.
-    // Veja função "PosicUser".
+    // Ajusta a relaÔøΩÔøΩo entre largura e altura para evitar distorÔøΩÔøΩo na imagem.
+    // Veja funÔøΩÔøΩo "PosicUser".
 	AspectRatio = 1.0f * w / h;
 	// Reset the coordinate system before modifying
 	glMatrixMode(GL_PROJECTION);
@@ -601,20 +591,45 @@ void reshape( int w, int h )
 	PosicUser();
 
 }
-float CombusTempo = 100;
+float CombusTempo = 10;
 
-void DesenhaCombustivel()
+
+
+
+void inicializaCombustivel()
 {
-    int restoCombus = ceil(CombusTempo/10);
+    combusA.Set(40,0.0,40);
+    combusB.Set(5,0.0,5);
+    combusC.Set(15,0.0,10);
 
+    combustiveisMapa.push_back(combusA);
+    combustiveisMapa.push_back(combusB);
+    combustiveisMapa.push_back(combusC);
+}
+
+void DesenhaBarrilCombustivel()
+{
+    for (int i = 0; i < combustiveisMapa.size(); i++)
+    {
+        glPushMatrix();
+            glTranslatef(combustiveisMapa[i].X,combustiveisMapa[i].Y,combustiveisMapa[i].Z);
+            glScalef(0.3,0.3,0.3);
+            cactus.ExibeObjeto();
+        glPopMatrix();
+    }
+}
+
+void DesenhaBarraCombustivel()
+{
+    int restoCombus = ceil(CombusTempo);
     if(restoCombus == 0)
         deltaMoveHorizontal = 0.0f;
-
 
     glPushMatrix();
         glColor3ub(255,0,0);
 
-        glTranslatef(5,5,0);
+        glTranslatef(0.2,0.2,0);
+
         for (int i = 0; i < restoCombus ; i++)
         {
 
@@ -622,13 +637,14 @@ void DesenhaCombustivel()
             glPushMatrix();
                 glBegin(GL_QUADS);
                     glVertex2f(0.0,0.0);
-                    glVertex2f(0.0,0.5);
-                    glVertex2f(0.5,0.5);
-                    glVertex2f(0.5,0.0);
+                    glVertex2f(0.0,0.2);
+                    glVertex2f(0.2,0.2);
+                    glVertex2f(0.2,0.0);
                 glEnd();
             glPopMatrix();
-
         }
+
+
     glPopMatrix();
 
 }
@@ -644,6 +660,20 @@ void DesenhaCarro()
     glPopMatrix();
 }
 
+
+void colisaoCarro()
+{
+    for(int i = 0; i < combustiveisMapa.size(); i++)
+    {
+        if(upRightX )
+        {
+            CombusTempo = 100;
+            combustiveisMapa[i].Set(100,100,100);
+        }
+    }
+
+}
+
 void display3d()
 {
     DefineLuz();
@@ -652,14 +682,18 @@ void display3d()
 
     DesenhaCenario();
 
+    DesenhaBarrilCombustivel();
 
     DesenhaCarro();
+
+    colisaoCarro();
+
 }
 
 void display2d()
 {
 
-  DesenhaCombustivel();
+  DesenhaBarraCombustivel();
 
 }
 
@@ -807,6 +841,11 @@ void display( void )
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
+    glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(90,AspectRatio,0.01,200);
@@ -830,6 +869,11 @@ void display( void )
     glOrtho(0, 10, 0, 10, 0.0, 30.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
 
     display2d();
 
@@ -869,7 +913,7 @@ void animate()
 
     AccumTime +=dt;
     if(carroLigado)
-        //CombusTempo -= dt;
+        CombusTempo -= dt;
 
 
     if (AccumTime >=10) // imprime o FPS a cada 3 segundos
@@ -878,7 +922,7 @@ void animate()
         AccumTime = 0;
     }
 
-    // Sa;va o tempo para o próximo ciclo de rendering
+    // Sa;va o tempo para o prÔøΩximo ciclo de rendering
     last_idle_time = time_now;
 
     glutPostRedisplay();
@@ -919,7 +963,7 @@ void keyboard ( unsigned char key, int x, int y )
     case 'g':
         Debug();
         break;
-    case 'f': //Muda a vis„o
+    case 'f': //Muda a visÔøΩo
         TrocaPerspectiva();
         break;
 
@@ -981,7 +1025,29 @@ void pressionaTecla ( int a_keys, int x, int y )
 	}
 }
 
+void init(void)
+{
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Fundo de tela preto
 
+	glShadeModel(GL_SMOOTH);
+	glColorMaterial ( GL_FRONT, GL_AMBIENT_AND_DIFFUSE );
+	glEnable(GL_DEPTH_TEST);
+	glEnable ( GL_CULL_FACE );
+
+
+    inicializaCombustivel();
+
+
+
+
+    // Obtem o tempo inicial
+#ifdef WIN32
+    last_idle_time = GetTickCount();
+#else
+    gettimeofday (&last_idle_time, NULL);
+#endif
+
+}
 // **********************************************************************
 //  void main ( int argc, char** argv )
 //
@@ -993,7 +1059,7 @@ int main ( int argc, char** argv )
 	glutInitDisplayMode (GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGB );
 	glutInitWindowPosition (0,0);
 	glutInitWindowSize  ( 700, 500 );
-	glutCreateWindow    ( "Computacao Grafica - Exemplo Basico 3D" );
+	glutCreateWindow    ( "Racing 3D" );
 
 	init ();
     //system("pwd");
@@ -1010,4 +1076,13 @@ int main ( int argc, char** argv )
 	glutMainLoop ( );
 	return 0;
 }
+
+// **********************************************************************
+//  void init(void)
+//		Inicializa os parÔøΩmetros globais de OpenGL
+//
+// **********************************************************************
+
+
+
 
