@@ -446,6 +446,74 @@ void DesenhaItem(int item)
     }
 }
 
+vector<TPoint> PreencheMatrix()
+{
+    ifstream inFile;
+    inFile.open("mapa2.txt");
+    int x,z;
+    inFile >> z;
+    vector<TPoint> resp;
+
+    for(int j = z; j > 0; j-=2)
+    {
+        glPushMatrix();
+            glTranslatef(0,0,j);
+            for(int i = z; i > 0; i-=2)
+            {
+                glPushMatrix();
+                    glTranslatef(i,0,0);
+                    inFile >> x;
+                    TPoint a;
+                    a.Set(i,x,j);
+                    resp.push_back(a);
+                glPopMatrix();
+            }
+
+            for(int i = 0; i < z; i+=2)
+            {
+                glPushMatrix();
+                    glTranslatef(i*-1,0,0);
+                    inFile >> x;
+                    TPoint a;
+                    a.Set(-i,x,j);
+                    resp.push_back(a);
+                glPopMatrix();
+            }
+        glPopMatrix();
+    }
+
+    for(int j = 0; j < z; j+=2)
+    {
+        glPushMatrix();
+            glTranslatef(0,0,j*-1);
+            for(int i = z; i > 0; i-=2)
+            {
+                glPushMatrix();
+                    glTranslatef(i,0,0);
+                    inFile >> x;
+                    TPoint a;
+                    a.Set(i,x,-j);
+                    resp.push_back(a);
+                glPopMatrix();
+            }
+
+            for(int i = 0; i < z; i+=2)
+            {
+                glPushMatrix();
+                    glTranslatef(i*-1,0,0);
+                    inFile >> x;
+                    TPoint a;
+                    a.Set(-i,x,-j);
+                    resp.push_back(a);
+                glPopMatrix();
+            }
+        glPopMatrix();
+    }
+
+    inFile.close();
+    return resp;
+}
+
 void DesenhaCenario()
 {
     ifstream inFile;
@@ -600,6 +668,113 @@ void display2d()
 //
 //
 // **********************************************************************
+vector<TPoint> MatrixCenario = PreencheMatrix();
+//[0] = posicao | [1] = direcao
+vector<vector<int>> posEnemys = {{1401,1}};
+
+int hh = 0;
+int direcao = 1001;
+int a = 740;
+
+void SyncMatrixJogador()
+{
+    //cout << "frente: " << a << endl;
+    if(carroLigado)
+    {
+        int caso = direcao%4;
+        //cout << "direcao: " << direcao << endl;
+        //cout << "posicao: " << a << endl;
+
+        switch(caso)
+        {
+        case 0:
+            if(MatrixCenario[a+1].Y != 1)
+                controleCarro(0);
+                //ingicao = 0
+
+            //if(ignicao != 0)
+            if(carroLigado)
+                a++;
+            break;
+
+        case 1:
+            if(MatrixCenario[a+40].Y != 1)
+                controleCarro(0);
+                //ignicao = 0
+
+            //if(ignicao != 0)
+            if(carroLigado)
+                a += 40;
+            break;
+
+        case 2:
+            if(MatrixCenario[a-1].Y != 1)
+                controleCarro(0);
+                //ignicao = 0
+
+            //if(ignicao != 0)
+            if(carroLigado)
+                a--;
+            break;
+
+        case 3:
+            if(MatrixCenario[a-40].Y != 1)
+                controleCarro(0);
+                //ignicao = 0
+
+            //if(ignicao != 0)
+            if(carroLigado)
+                a -=40;
+            break;
+        }
+    }
+}
+
+void SyncMatrixEnemy(int id, int atual)
+{
+    int caso = posEnemys[id][1]%4;
+    switch(caso)
+    {
+    case 0:
+        if(MatrixCenario[atual+1].Y != 1)
+            //ingicao = 0
+
+        //if(ignicao != 0)
+            atual++;
+        break;
+
+    case 1:
+        if(MatrixCenario[atual+40].Y != 1)
+            //ignicao = 0
+
+        //if(ignicao != 0)
+            atual += 40;
+        break;
+
+    case 2:
+        if(MatrixCenario[atual-1].Y != 1)
+            //ignicao = 0
+
+        //if(ignicao != 0)
+            atual--;
+        break;
+
+    case 3:
+        if(MatrixCenario[atual-40].Y != 1)
+            //ignicao = 0
+
+        //if(ignicao != 0)
+            atual -=40;
+        break;
+    }
+}
+
+void MovimentaEnemys()
+{
+    for(int i = 0; i < posEnemys.size(); i++)
+        SyncMatrixEnemy(i,posEnemys[i][0]);
+}
+
 void display( void )
 {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -611,6 +786,16 @@ void display( void )
     glLoadIdentity();
 
     display3d();
+
+    //20 == 2/0.1 | 2 = distancia , 0.1 = velocidade
+    if(hh%10 == 0)
+    {
+        SyncMatrixJogador();
+        //movimenta enemys
+        //cout << "teste flood" << endl;
+    }
+
+    hh++;
 
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity();
@@ -697,9 +882,11 @@ void keyboard ( unsigned char key, int x, int y )
         break;
     case 'a':
         controleCarro(2); //Movimento Esquerda
+        direcao--;
         break;
     case 'd':
         controleCarro(1); //Movimento Direita
+        direcao++;
         break;
     case 'g':
         Debug();
